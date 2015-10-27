@@ -1,0 +1,15 @@
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\VrepSimpleTest.exe.config
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\VrepSimpleTest.exe
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\VrepSimpleTest.pdb
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\remoteApiNETWrapper.dll
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\remoteApiNETWrapper.pdb
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\CsharpSlam.csprojResolveAssemblyReference.cache
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\MainWindow.baml
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\MainWindow.g.cs
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\App.g.cs
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest_MarkupCompile.cache
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.g.resources
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.Properties.Resources.resources
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\CsharpSlam.csproj.GenerateResource.Cache
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.exe
+F:\CSharpSlam\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.pdb
