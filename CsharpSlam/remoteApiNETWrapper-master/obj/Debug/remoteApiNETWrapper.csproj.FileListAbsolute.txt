@@ -1,4 +1,3 @@
-C:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.dll
 C:\Users\herno\Desktop\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.csprojResolveAssemblyReference.cache
 C:\Users\herno\Desktop\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.dll
 C:\Users\herno\Desktop\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb
@@ -14,10 +13,14 @@ D:\Gabor\SZE\2015-16\TudSzoft\3\sze-academic-robotics-projects-master\VrepCsharp
 D:\Gabor\SZE\2015-16\TudSzoft\3\sze-academic-robotics-projects-master\VrepCsharpInteroperation\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.dll
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb
-C:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.pdb
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.csprojResolveAssemblyReference.cache
 D:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.dll
 D:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.pdb
 D:\Desktop\Games\GitHubVisualStudioPublic\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.csprojResolveAssemblyReference.cache
 D:\Desktop\Games\GitHubVisualStudioPublic\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.dll
 D:\Desktop\Games\GitHubVisualStudioPublic\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb
+C:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.dll
+C:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.pdb
+C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.csprojResolveAssemblyReference.cache
+C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.dll
+C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb

@@ -32,7 +32,7 @@ namespace VrepSimpleTest
         private void InitHandlers()
         {
 
-            VREPWrapper.simxGetObjectHandle(_clientID, "neobotix#0", out _handleNeo, simx_opmode.oneshot_wait);
+            //VREPWrapper.simxGetObjectHandle(_clientID, "neobotix#0", out _handleNeo, simx_opmode.oneshot_wait);
             Debug.WriteLine("Handle neobotix#0: " + _handleNeo);
             VREPWrapper.simxGetObjectHandle(_clientID, "wheel_left#0", out _handleLeftMotor, simx_opmode.oneshot_wait);
             Debug.WriteLine("Handle left motor #0: " + _handleLeftMotor);

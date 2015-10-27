@@ -29,8 +29,6 @@ D:\Desktop\Games\GitHubVisualStudioPublic\CsharpSlam\VrepSimpleTest\obj\Debug\Vr
 D:\Desktop\Games\GitHubVisualStudioPublic\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.Properties.Resources.resources
 D:\Desktop\Games\GitHubVisualStudioPublic\CsharpSlam\VrepSimpleTest\obj\Debug\CsharpSlam.csproj.GenerateResource.Cache
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\VrepSimpleTest.exe.config
-C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.exe
-C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.pdb
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\VrepSimpleTest.exe
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\VrepSimpleTest.pdb
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\remoteApiNETWrapper.dll
@@ -43,3 +41,5 @@ C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSim
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.g.resources
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.Properties.Resources.resources
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\CsharpSlam.csproj.GenerateResource.Cache
+C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.exe
+C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.pdb
