@@ -44,7 +44,6 @@ namespace VrepSimpleTest
         private void buttonConnect_Click(object sender, RoutedEventArgs e)
         {
             int result =Control.Connect();
-          
             SetButtons(result);
 
         }
@@ -78,30 +77,30 @@ namespace VrepSimpleTest
 
         private void buttonFwd_Click(object sender, RoutedEventArgs e)
         {
-            Control.Forward();
+            Control.SetWheelSpeed(5, 5);
 
         }
 
         private void buttonBck_Click(object sender, RoutedEventArgs e)
         {
-            Control.Backward();
+            Control.SetWheelSpeed(-5, -5);
 
         }
 
         private void buttonStop_Click(object sender, RoutedEventArgs e)
         {
-            Control.Stop();
+            Control.SetWheelSpeed(0,0);
         }
 
         private void buttonRight_Click(object sender, RoutedEventArgs e)
         {
-            Control.Right();
+            Control.SetWheelSpeed(5, 0);
 
         }
 
         private void buttonLeft_Click(object sender, RoutedEventArgs e)
         {
-            Control.Left();
+            Control.SetWheelSpeed(0, 5);
 
         }
 

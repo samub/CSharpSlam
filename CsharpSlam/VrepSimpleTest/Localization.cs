@@ -8,6 +8,18 @@ namespace VrepSimpleTest
 {
      class Localization
     {
-        public  void GetPosition() { }
+        Control Control;
+
+        public Localization(Control control) {
+            this.Control = control;
+        }
+
+        public  Pose GetPose(Type Type, Layers Layers) {
+            Pose pose = new Pose();
+            
+            return pose;
+        }
+
+      
     }
 }

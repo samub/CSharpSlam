@@ -8,8 +8,6 @@ namespace VrepSimpleTest
 {
     class MapBuilder
     {
-
-
         public  void GetLayers() { }
 
     }

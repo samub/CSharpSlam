@@ -9,16 +9,16 @@ using System.Windows;
 
 namespace VrepSimpleTest
 {
-   static class IRobot
+    interface iRobot
     {
-        public static int X { get; set; }
-        public static int T { get; set; }
-        public static float degree { get; set; }
 
-        
-
-
+        int Connect();
+        void Disconnect();
+        double[] GetWheelSpeed();
+        double[,] GetLaserScannerData();
+        void SetWheelSpeed(double R, double L);
+        void SetWheelSpeed(double[] LinAng);
 
     }
-    
+
 }
