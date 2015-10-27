@@ -10,16 +10,16 @@ using System.Windows;
 
 namespace VrepSimpleTest
 {
-    class Control : iRobot
+    class Control :iRobot
     {
         public MapBuilder MapBuilder;
         public Localization Localization;
 
-        int _clientID = -1;
-        int _handleNeo;
-        int _handleLeftMotor, _handleRightMotor;
-        int _handleSick;
-        bool _connected = false;
+         int _clientID=-1;
+         int _handleNeo;
+         int _handleLeftMotor, _handleRightMotor;
+         int  _handleSick;
+         bool _connected = false;
 
 
         public Control()
@@ -41,8 +41,7 @@ namespace VrepSimpleTest
             VREPWrapper.simxGetObjectHandle(_clientID, "SICK_S300_fast#0", out _handleSick, simx_opmode.oneshot_wait);
         }
 
-        public int Connect()
-        {
+        public int  Connect() {
             if (!_connected) // If not connected - try to connect
             {
                 try
@@ -80,15 +79,14 @@ namespace VrepSimpleTest
 
         }
 
-        public void Disconnect()
+        public  void Disconnect()
         {
             if (_connected)
                 VREPWrapper.simxFinish(_clientID);
 
         }
 
-        public void ResetSimulation()
-        {
+        public  void ResetSimulation() {
             VREPWrapper.simxStopSimulation(_clientID, simx_opmode.oneshot_wait);
             Thread.Sleep(400);
             VREPWrapper.simxStartSimulation(_clientID, simx_opmode.oneshot_wait);
@@ -98,7 +96,7 @@ namespace VrepSimpleTest
         public double[] GetWheelSpeed()
         {
             throw new NotImplementedException();
-
+            
         }
 
         public double[,] GetLaserScannerData()

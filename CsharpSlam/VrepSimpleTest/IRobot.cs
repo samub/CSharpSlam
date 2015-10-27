@@ -9,8 +9,7 @@ using System.Windows;
 
 namespace VrepSimpleTest
 {
-    interface iRobot
-    {
+    interface iRobot {
 
         int Connect();
         void Disconnect();
@@ -20,5 +19,5 @@ namespace VrepSimpleTest
         void SetWheelSpeed(double[] LinAng);
 
     }
-
+    
 }
