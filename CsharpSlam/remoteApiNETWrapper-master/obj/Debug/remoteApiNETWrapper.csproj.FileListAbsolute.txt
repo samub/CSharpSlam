@@ -1,0 +1,4 @@
+F:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.dll
+F:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.pdb
+F:\CSharpSlam\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.dll
+F:\CSharpSlam\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb
