@@ -20,13 +20,16 @@ namespace VrepSimpleTest
          int _handleLeftMotor, _handleRightMotor;
          int  _handleSick;
          bool _connected = false;
-
+        IntPtr _signalValuePtr;
+        int _signalLength;
 
         public Control()
         {
+            
             MapBuilder = new MapBuilder();
             Localization = new Localization(this);
             InitHandlers();
+
         }
 
         private void InitHandlers()
@@ -99,9 +102,46 @@ namespace VrepSimpleTest
             
         }
 
-        public double[,] GetLaserScannerData()
-        {
-            throw new NotImplementedException();
+        public double[,] GetLaserScannerData(){
+
+            
+            int i;
+            double[,] _laserScannerData;
+            // reading the laser scanner stream 
+            VREPWrapper.simxReadStringStream(_clientID, "measuredDataAtThisTime0", ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
+            
+          //  Debug.WriteLine(String.Format("test: {0:X8} {1:D} {2:X8}", _signalValuePtr, _signalLength, _signalValuePtr+_signalLength));
+            float[] f = new float[685 * 3];
+            if (_signalLength >= f.GetLength(0))
+            {
+                //we managed to get the laserdatas from Vrep
+
+                _laserScannerData = new double[3, f.GetLength(0) / 3];
+
+                // todo read the latest stream (this is not the latest)
+                unsafe
+                {
+                    float* pp = (float*)(_signalValuePtr).ToPointer();
+                    //Debug.WriteLine("pp: " + *pp);
+                    for (i = 0; i < f.GetLength(0); i++)
+                        f[i] = (float)*pp++; // pointer to float array 
+                }
+                i = 0;
+                // reshaping the 1D [3*685] data to 2D [3, 685] > x, y, z coordinates
+                for (i = 0; i < f.GetLength(0); i++)
+                    if (!(Math.Abs((float)f[i]) < 0.000001))
+                        _laserScannerData[i % 3, i / 3] = (float)f[i];
+
+                return _laserScannerData;
+            }
+            else
+            {
+                // we couldnt get the laserdata, so we return an empty array
+                _laserScannerData = new double[0, 0];
+                return _laserScannerData;
+
+            }
+
         }
 
         public void SetWheelSpeed(double R, double L)

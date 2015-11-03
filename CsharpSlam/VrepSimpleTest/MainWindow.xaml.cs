@@ -45,7 +45,7 @@ namespace VrepSimpleTest
         {
             int result =Control.Connect();
             SetButtons(result);
-
+       
         }
 
         public void SetButtons(int result) {
@@ -129,7 +129,28 @@ namespace VrepSimpleTest
 
         private void buttonClearCanvas_Click(object sender, RoutedEventArgs e)
         {
-            canvScan.Children.Clear();
+           
+        }
+
+        private void buttonLaserScanTest_Click(object sender, RoutedEventArgs e)
+        {
+            //test function, should be removed later
+            double[,] test = new double[3, 685];
+            test = Control.GetLaserScannerData();
+            
+            //print the array on the screen if not empty
+            if (test.GetLength(0) > 1)
+            {
+                
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 685; j++)
+                    {
+                        Console.Write("{0}\t", test[i, j]);
+                    }
+                    Console.WriteLine();
+                }
+            }
         }
     }
 }

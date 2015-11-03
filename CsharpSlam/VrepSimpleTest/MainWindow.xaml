@@ -15,6 +15,7 @@
             <Button Margin="4" Click="buttonRight_Click" Content="Right" x:Name="buttonRight" />
             <Button Margin="4" Click="buttonStop_Click"  Content="Stop" x:Name="buttonStop" Background="IndianRed"/>
             <Button Margin="4" Click="buttonResetSim_Click"  Content="Reset simulation" x:Name="buttonResetSim" Background="LightCoral"/>
+            <Button Margin="4" Click="buttonLaserScanTest_Click"  x:Name="buttonScan" >Laser Scan test</Button>
             <Button Margin="4" Click="buttonClearCanvas_Click" x:Name="buttonClearCanvas">Clear canvas</Button>
             <TextBlock x:Name="txtData" Margin="4" Text="{Binding PositionString}" />
             <TextBlock x:Name="txtInfo" Margin="4" Text="{Binding WheelString}"></TextBlock>
