@@ -8,8 +8,8 @@ namespace VrepSimpleTest
 {
     struct Layers
     {
-        double[,] WallLayer;
-        double[,] EmptyLayer;
-        double[,] RobotPathLayer;
+      public  double[,] WallLayer;
+      public  double[,] EmptyLayer;
+      public  double[,] RobotPathLayer;
     }
 }

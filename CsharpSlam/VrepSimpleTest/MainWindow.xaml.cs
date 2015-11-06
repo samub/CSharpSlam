@@ -28,6 +28,7 @@ namespace VrepSimpleTest
         
        
         Control Control;
+       
     
         
 
@@ -37,6 +38,7 @@ namespace VrepSimpleTest
             stackControls.Visibility = Visibility.Hidden;
             
             Control = new Control();
+            
             
 
         }
@@ -135,22 +137,8 @@ namespace VrepSimpleTest
         private void buttonLaserScanTest_Click(object sender, RoutedEventArgs e)
         {
             //test function, should be removed later
-            double[,] test = new double[3, 685];
-            test = Control.GetLaserScannerData();
-            
-            //print the array on the screen if not empty
-            if (test.GetLength(0) > 1)
-            {
-                
-                for (int i = 0; i < 3; i++)
-                {
-                    for (int j = 0; j < 685; j++)
-                    {
-                        Console.Write("{0}\t", test[i, j]);
-                    }
-                    Console.WriteLine();
-                }
-            }
+
+            Control.MapBuilder.GetLayers();
         }
     }
 }

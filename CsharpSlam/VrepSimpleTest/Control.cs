@@ -12,7 +12,7 @@ namespace VrepSimpleTest
 {
     class Control :iRobot
     {
-        public MapBuilder MapBuilder;
+        public MapBuilder MapBuilder { get;}
         public Localization Localization;
 
          int _clientID=-1;
@@ -26,7 +26,7 @@ namespace VrepSimpleTest
         public Control()
         {
             
-            MapBuilder = new MapBuilder();
+            MapBuilder = new MapBuilder(this);
             Localization = new Localization(this);
             InitHandlers();
 
