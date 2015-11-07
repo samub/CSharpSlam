@@ -12,8 +12,13 @@ namespace VrepSimpleTest
 {
     class Control :iRobot
     {
+        public const int MapZoom = 50;
+
         public MapBuilder MapBuilder { get;}
         public Localization Localization;
+
+        Thread MapBuilderThread,
+               LocalizationThread;
 
          int _clientID=-1;
          int _handleNeo;
@@ -28,8 +33,9 @@ namespace VrepSimpleTest
             
             MapBuilder = new MapBuilder(this);
             Localization = new Localization(this);
+            MapBuilder.SetLocalization(Localization);
+            Localization.SetMapbuilder(MapBuilder);
             InitHandlers();
-
         }
 
         private void InitHandlers()
@@ -61,6 +67,14 @@ namespace VrepSimpleTest
                     Debug.WriteLine("Connected to V-REP");
                     _connected = true;
                     InitHandlers();
+
+                    MapBuilderThread = new Thread(new ThreadStart(MapBuilder.BuildLayers));
+                    LocalizationThread = new Thread(new ThreadStart(Localization.CalculatePose));
+
+                    LocalizationThread.Start();
+                    Thread.Sleep(1000);
+                    MapBuilderThread.Start();
+
                     return 0;
                 }
                 else // Connection trial failed
@@ -85,8 +99,11 @@ namespace VrepSimpleTest
         public  void Disconnect()
         {
             if (_connected)
+            { 
                 VREPWrapper.simxFinish(_clientID);
-
+                MapBuilderThread.Abort();
+                LocalizationThread.Abort();
+            }
         }
 
         public  void ResetSimulation() {
@@ -100,6 +117,42 @@ namespace VrepSimpleTest
         {
             throw new NotImplementedException();
             
+        }
+
+        /// <summary>
+        /// float[z,y,x]
+        /// </summary>
+        /// <returns>float[z,y,x]</returns>
+        public float[] GetPosition()
+        {
+            int handleNeo0, handleNeo1;
+            float[] pos = new float[3];
+            VREPWrapper.simxGetObjectHandle(_clientID, "neobotix#0", out handleNeo0, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectHandle(_clientID, "neobotix#1", out handleNeo1, simx_opmode.oneshot_wait);
+
+            VREPWrapper.simxGetObjectPosition(_clientID, handleNeo0, handleNeo1, pos, simx_opmode.oneshot_wait);
+            //Debug.WriteLine("Position: x: " + pos[2] + " y: " + pos[1] + " z: " + pos[0]);
+            return pos; 
+            //Debug.WriteLine(ori[0]+" "+ori[1]);
+            //txtInfo.Text = "x: " + pos[2] + " y: " + pos[1] + " z: " + pos[0];
+            
+            //return new float[2] { pos[2], pos[1] };
+        }
+
+        /// <summary>
+        /// float[x,y]
+        /// </summary>
+        /// <returns>float[x,y]</returns>
+        public float[] GetOriantation()
+        {
+            float[] ori = new float[2];
+
+            int handleNeo0, handleNeo1;
+            VREPWrapper.simxGetObjectHandle(_clientID, "neobotix#0", out handleNeo0, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectHandle(_clientID, "neobotix#1", out handleNeo1, simx_opmode.oneshot_wait);
+            
+            VREPWrapper.simxGetObjectOrientation(_clientID, handleNeo0, handleNeo1, ori, simx_opmode.oneshot_wait);
+            return ori;// x y
         }
 
         public double[,] GetLaserScannerData(){

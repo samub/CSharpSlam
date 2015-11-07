@@ -1,42 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace VrepSimpleTest
 {
     class MapBuilder
     {
-        private const int MapSize = 640;
-        private const int MapZoom = 50;
+        private const int MapSize = 2000;
         private double[,] LaserData;
         private Control Control;
         private Layers Layers;
+        private Localization Localization;
         private int xW, yW;
 
         public MapBuilder(Control c) {
             this.Control = c;
             this.LaserData = new double[3, 685];
-           
+        }
 
+        public void SetLocalization(Localization Localization)
+        {
+            this.Localization = Localization;
+        }
+
+        public void BuildLayers(){
+            do
+            {
+                Pose p = Localization.GetPose();
+                Debug.WriteLine("x: {0}, y: {1}, degree: {2}",p.x, p.y, p.degree);
+                
+                LaserData = Control.GetLaserScannerData();
+                // transform laserdata ...
+
+                //if we successfully got the laserdatas we create each layer
+
+                if (LaserData.GetLength(0) > 0)
+                {
+                    CreateWallLayer();
+                    CreateEmptyLayer();
+                    CreateRobotPathLayer();
+                }
+
+                Thread.Sleep(5000);
+            } while (true);
         }
         public  Layers GetLayers() {
-            
-
-            LaserData = Control.GetLaserScannerData();
-            // transform laserdata ...
-
-            //if we successfully got the laserdatas we create each layer
-            
-            if (LaserData.GetLength(0) > 0)
-            {
-                CreateWallLayer();
-                CreateEmptyLayer();
-                CreateRobotPathLayer();
-            }
-
             return Layers;
         }
 
@@ -44,14 +57,14 @@ namespace VrepSimpleTest
             Layers.WallLayer = new double[MapSize, MapSize];
             
             for (int i = 0; i < LaserData.GetLength(1); i++) {
-                xW = Convert.ToInt32(MapZoom * (LaserData[1, i]));
-                yW = Convert.ToInt32(MapZoom * (LaserData[0, i]));
-                if (xW > 0 && yW > 0 && xW < MapSize && MapSize < 685){
-                    Layers.WallLayer[xW, yW] = 1;
+                xW = Convert.ToInt32(Control.MapZoom * (LaserData[1, i]));
+                yW = Convert.ToInt32(Control.MapZoom * (LaserData[0, i]));
+                if (xW > 0 && yW > 0 && xW < MapSize && yW < MapSize){
+                    Layers.WallLayer[xW, yW] = (1.0 + Layers.WallLayer[xW, yW]) / 2;
                 }
             }
             //write to csv file for testing 
-            WriteToCSV(Layers.WallLayer, "WallLayer");
+            //WriteToCSV(Layers.WallLayer, "WallLayer");
 
         }
         private void CreateEmptyLayer() {

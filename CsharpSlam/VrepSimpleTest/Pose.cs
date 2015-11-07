@@ -8,9 +8,14 @@ namespace VrepSimpleTest
 {
     struct Pose
     {
-        public enum Type
+        /*public enum Type
         {
             Raw, Calculated
+        }*/
+        public Pose(int x, int y, double degree) {
+            this.x = x;
+            this.y = y;
+            this.degree = degree;
         }
         public int x;
         public int y;
