@@ -35,8 +35,15 @@ namespace VrepSimpleTest
                 Debug.WriteLine("x: {0}, y: {1}, degree: {2}",p.x, p.y, p.degree);
                 
                 LaserData = Control.GetLaserScannerData();
-                // transform laserdata ...
-
+                double theta = p.degree / 180 * Math.PI;
+                for(int i = 0; i < LaserData.GetLength(1); i++)
+                {
+                    double tmpx = Math.Cos(theta) * LaserData[0, i] - Math.Sin(theta) * LaserData[1, i];
+                    double tmpy = Math.Sin(theta) * LaserData[0, i] + Math.Cos(theta) * LaserData[1, i];
+                    LaserData[0, i] = tmpx * Control.MapZoom;
+                    LaserData[1, i] = tmpy * Control.MapZoom;
+                    //Debug.WriteLine("Laser Data: " + LaserData[0, i] + " " + LaserData[1, i]);
+                }
                 //if we successfully got the laserdatas we create each layer
 
                 if (LaserData.GetLength(0) > 0)
@@ -57,8 +64,8 @@ namespace VrepSimpleTest
             Layers.WallLayer = new double[MapSize, MapSize];
             
             for (int i = 0; i < LaserData.GetLength(1); i++) {
-                xW = Convert.ToInt32(Control.MapZoom * (LaserData[1, i]));
-                yW = Convert.ToInt32(Control.MapZoom * (LaserData[0, i]));
+                xW = Convert.ToInt32((LaserData[1, i]));
+                yW = Convert.ToInt32((LaserData[0, i]));
                 if (xW > 0 && yW > 0 && xW < MapSize && yW < MapSize){
                     Layers.WallLayer[xW, yW] = (1.0 + Layers.WallLayer[xW, yW]) / 2;
                 }
