@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace VrepSimpleTest.Properties {
+namespace CSharpSlam.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

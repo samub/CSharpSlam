@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VrepSimpleTest
+﻿namespace CSharpSlam
 {
-    struct Layers
+    internal struct Layers
     {
-      public  double[,] WallLayer;
-      public  double[,] EmptyLayer;
-      public  double[,] RobotPathLayer;
+        public double[,] WallLayer;
+        public double[,] EmptyLayer;
+        public double[,] RobotPathLayer;
     }
 }

@@ -1,144 +1,97 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Threading;
-using remoteApiNETWrapper;
-
-namespace VrepSimpleTest
+﻿namespace CSharpSlam
 {
+    using System;
+    using System.ComponentModel;
+    using System.Windows;
+    using System.Windows.Media;
+    using R = Properties.Resources;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow
     {
-
-        
-       
-        Control Control;
-       
-    
-        
-
         public MainWindow()
         {
             InitializeComponent();
-            stackControls.Visibility = Visibility.Hidden;
-            
-            Control = new Control();
-            
-            
-
+            StackControls.Visibility = Visibility.Hidden;
+            RobotControl = new RobotControl();
         }
 
-        private void buttonConnect_Click(object sender, RoutedEventArgs e)
+        private RobotControl RobotControl { get; set; }
+
+        private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
-            int result =Control.Connect();
-            SetButtons(result);
-       
+            SetButtons(RobotControl.Connect());
         }
 
-        public void SetButtons(int result) {
-
-            if (result == -1)
+        private void SetButtons(int result)
+        {
+            switch (result)
             {
-                buttonConnect.Background = Brushes.IndianRed;
-                stackControls.Visibility = Visibility.Hidden;
+                case -1:
+                    ButtonConnect.Background = Brushes.IndianRed;
+                    StackControls.Visibility = Visibility.Hidden;
+                    break;
+                case -2:
+                    ButtonConnect.Background = Brushes.IndianRed;
+                    ButtonConnect.Content = R.Reconnect;
+                    StackControls.Visibility = Visibility.Hidden;
+                    break;
+                default:
+                    ButtonConnect.Background = Brushes.LightSeaGreen;
+                    StackControls.Visibility = Visibility.Visible;
+                    ButtonConnect.Content = R.Disconnect;
+                    break;
             }
-            else if (result == -2)
-            {
-                buttonConnect.Background = Brushes.IndianRed;
-                buttonConnect.Content = "Reconnect";
-                stackControls.Visibility = Visibility.Hidden;
-              
-
-            }
-            else
-            {
-
-                buttonConnect.Background = Brushes.LightSeaGreen;
-                stackControls.Visibility = Visibility.Visible;
-                buttonConnect.Content = "Disconnect";
-
-            }
-
         }
 
-
-        private void buttonFwd_Click(object sender, RoutedEventArgs e)
+        private void ButtonFwd_Click(object sender, RoutedEventArgs e)
         {
-            Control.SetWheelSpeed(5, 5);
-
+            RobotControl.SetWheelSpeed(5, 5);
         }
 
-        private void buttonBck_Click(object sender, RoutedEventArgs e)
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
         {
-            Control.SetWheelSpeed(-5, -5);
-
+            RobotControl.SetWheelSpeed(-5, -5);
         }
 
-        private void buttonStop_Click(object sender, RoutedEventArgs e)
+        private void ButtonStop_Click(object sender, RoutedEventArgs e)
         {
-            Control.SetWheelSpeed(0,0);
+            RobotControl.SetWheelSpeed(0, 0);
         }
 
-        private void buttonRight_Click(object sender, RoutedEventArgs e)
+        private void ButtonRight_Click(object sender, RoutedEventArgs e)
         {
-            Control.SetWheelSpeed(5, 0);
-
+            RobotControl.SetWheelSpeed(5, 0);
         }
 
-        private void buttonLeft_Click(object sender, RoutedEventArgs e)
+        private void ButtonLeft_Click(object sender, RoutedEventArgs e)
         {
-            Control.SetWheelSpeed(0, 5);
-
+            RobotControl.SetWheelSpeed(0, 5);
         }
 
         private void Window_Closed(object sender, EventArgs e)
         {
-     
-            Control.Disconnect();
+            //TODO: az app nem szunteti meg a processt kilepesnel es hagyja futni a szimulaciot
+            RobotControl.Disconnect();
+            Application.Current.Shutdown();
         }
 
-        protected virtual void OnPropertyChanged(string property)
+        private void ButtonResetSim_Click(object sender, RoutedEventArgs e)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            RobotControl.ResetSimulation();
         }
 
-        #region INotifyPropertyChanged Members
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        #endregion
-
-        private void buttonResetSim_Click(object sender, RoutedEventArgs e)
+        private void ButtonClearCanvas_Click(object sender, RoutedEventArgs e)
         {
-            Control.ResetSimulation();
+            //TODO:
         }
 
-        private void buttonClearCanvas_Click(object sender, RoutedEventArgs e)
-        {
-           
-        }
-
-        private void buttonLaserScanTest_Click(object sender, RoutedEventArgs e)
+        private void ButtonLaserScanTest_Click(object sender, RoutedEventArgs e)
         {
             //test function, should be removed later
-
-            Control.MapBuilder.GetLayers();
+            RobotControl.MapBuilder.GetLayers();
         }
     }
 }

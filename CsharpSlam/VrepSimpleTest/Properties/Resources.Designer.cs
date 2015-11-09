@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace VrepSimpleTest.Properties {
+namespace CSharpSlam.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace VrepSimpleTest.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("VrepSimpleTest.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CSharpSlam.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,96 @@ namespace VrepSimpleTest.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        internal static string Disconnect {
+            get {
+                return ResourceManager.GetString("Disconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to remoteApi.dll missing.
+        /// </summary>
+        internal static string ErrorMessage_DLL {
+            get {
+                return ResourceManager.GetString("ErrorMessage_DLL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 127.0.0.1.
+        /// </summary>
+        internal static string localhost {
+            get {
+                return ResourceManager.GetString("localhost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to measuredDataAtThisTime0.
+        /// </summary>
+        internal static string measuredData0 {
+            get {
+                return ResourceManager.GetString("measuredData0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to neobotix#0.
+        /// </summary>
+        internal static string neobotix0 {
+            get {
+                return ResourceManager.GetString("neobotix0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to neobotix#1.
+        /// </summary>
+        internal static string neobotix1 {
+            get {
+                return ResourceManager.GetString("neobotix1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reconnect.
+        /// </summary>
+        internal static string Reconnect {
+            get {
+                return ResourceManager.GetString("Reconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SICK_S300_fast#0.
+        /// </summary>
+        internal static string SICKS300 {
+            get {
+                return ResourceManager.GetString("SICKS300", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to wheel_left#0.
+        /// </summary>
+        internal static string wheelLeft0 {
+            get {
+                return ResourceManager.GetString("wheelLeft0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to wheel_right#0.
+        /// </summary>
+        internal static string wheelRight0 {
+            get {
+                return ResourceManager.GetString("wheelRight0", resourceCulture);
             }
         }
     }

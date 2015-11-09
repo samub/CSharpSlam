@@ -1,23 +1,16 @@
-﻿using remoteApiNETWrapper;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-
-namespace VrepSimpleTest
+﻿namespace CSharpSlam
 {
-    interface iRobot {
-
+    internal interface IRobot
+    {
         int Connect();
+        
         void Disconnect();
+        
         double[] GetWheelSpeed();
-        double[,] GetLaserScannerData();
-        void SetWheelSpeed(double R, double L);
-        void SetWheelSpeed(double[] LinAng);
+        //double[,] GetLaserScannerData();
+        
+        void SetWheelSpeed(double r, double l);
 
+        void SetWheelSpeed(double[] linAng);
     }
-    
 }
