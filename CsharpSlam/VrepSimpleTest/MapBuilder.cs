@@ -16,23 +16,22 @@ namespace CSharpSlam
     using System.IO;
     using System.Linq;
     using System.Threading;
-    using remoteApiNETWrapper;
-    using R = Properties.Resources;
 
     internal class MapBuilder
     {
-        private double[,] _laserData;
         private Layers _layers;
         private int _xW, _yW;
-        private IntPtr _signalValuePtr;
-        private int _signalLength;
+
+        public event EventHandler RequestLaserScannerDataRefresh;
 
         public MapBuilder()
         {
-            _laserData = new double[3, 685];
+            LaserData = new double[3, 685];
         }
 
         public Pose Pose { private get; set; }
+
+        public double[,] LaserData { private get; set; }
 
         public int ClientId { private get; set; }
 
@@ -41,25 +40,27 @@ namespace CSharpSlam
             do
             {
                 Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, Pose.Y, Pose.Degree);
-                _laserData = GetLaserScannerData();
+                //LaserData = GetLaserScannerData();
                 double theta = Pose.Degree / 180 * Math.PI;
-                for (int i = 0; i < _laserData.GetLength(1); i++)
+                for (int i = 0; i < LaserData.GetLength(1); i++)
                 {
-                    double tmpx = (Math.Cos(theta) * _laserData[0, i]) - (Math.Sin(theta) * _laserData[1, i]);
-                    double tmpy = (Math.Sin(theta) * _laserData[0, i]) + (Math.Cos(theta) * _laserData[1, i]);
-                    _laserData[0, i] = tmpx * RobotControl.MapZoom;
-                    _laserData[1, i] = tmpy * RobotControl.MapZoom;
+                    double tmpx = (Math.Cos(theta) * LaserData[0, i]) - (Math.Sin(theta) * LaserData[1, i]);
+                    double tmpy = (Math.Sin(theta) * LaserData[0, i]) + (Math.Cos(theta) * LaserData[1, i]);
+                    LaserData[0, i] = tmpx * RobotControl.MapZoom;
+                    LaserData[1, i] = tmpy * RobotControl.MapZoom;
                     //Debug.WriteLine("Laser Data: " + LaserData[0, i] + " " + LaserData[1, i]);
                 }
                 //if we successfully got the laserdatas we create each layer
-                if (_laserData.GetLength(0) > 0)
+                if (LaserData.GetLength(0) > 0)
                 {
                     CreateWallLayer();
                     CreateEmptyLayer();
                     CreateRobotPathLayer();
                 }
-
-                Thread.Sleep(5000);
+                //Temporary solution for the problem. Needs to be changed.
+                Thread.Sleep(4500);
+                OnRequestLaserScannerDataRefresh();
+                Thread.Sleep(500);
             }
             while (true);
         }
@@ -69,14 +70,27 @@ namespace CSharpSlam
             return _layers;
         }
 
+        private void OnRequestLaserScannerDataRefresh()
+        {
+            if (RequestLaserScannerDataRefresh != null)
+            {
+                RequestLaserScannerDataRefresh(this, EventArgs.Empty);
+            }
+            ////TODO: kitorolni a c#5 kodot es cserelni 6-ra
+            ////RequestLaserScannerDataRefresh?.Invoke(this, EventArgs.Empty);
+        }
+
         private void CreateWallLayer()
         {
             _layers.WallLayer = new double[RobotControl.MapSize, RobotControl.MapSize];
 
-            for (int i = 0; i < _laserData.GetLength(1); i++)
+            for (int i = 0; i < LaserData.GetLength(1); i++)
             {
-                _xW = Convert.ToInt32(_laserData[1, i]);
-                _yW = Convert.ToInt32(_laserData[0, i]);
+                //TODO: itt kaptam egy OverflowExceptiont konvertalasnal. ki kell vizsgalni.
+                ////Nem futott a szimulacio vegigkattintgattam a gombokat, 
+                ////stop -ot tobbszor is majd miutan elinditottam akkor dobta
+                _xW = Convert.ToInt32(LaserData[1, i]);
+                _yW = Convert.ToInt32(LaserData[0, i]);
                 if (_xW > 0 && _yW > 0 && _xW < RobotControl.MapSize && _yW < RobotControl.MapSize)
                 {
                     _layers.WallLayer[_xW, _yW] = (1.0 + _layers.WallLayer[_xW, _yW]) / 2;
@@ -94,47 +108,6 @@ namespace CSharpSlam
         private void CreateRobotPathLayer()
         {
             //TODO:
-        }
-
-        private double[,] GetLaserScannerData()
-        {
-            double[,] laserScannerData;
-            // reading the laser scanner stream 
-            VREPWrapper.simxReadStringStream(ClientId, R.measuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
-
-            //  Debug.WriteLine(String.Format("test: {0:X8} {1:D} {2:X8}", _signalValuePtr, _signalLength, _signalValuePtr+_signalLength));
-            float[] f = new float[685 * 3];
-            if (_signalLength >= f.GetLength(0))
-            {
-                //we managed to get the laserdatas from Vrep
-                laserScannerData = new double[3, f.GetLength(0) / 3];
-
-                // todo read the latest stream (this is not the latest)
-                int i;
-                unsafe
-                {
-                    float* pp = (float*)_signalValuePtr.ToPointer();
-                    //Debug.WriteLine("pp: " + *pp);
-                    for (i = 0; i < f.GetLength(0); i++)
-                    {
-                        f[i] = *pp++; // pointer to float array 
-                    }
-                }
-                // reshaping the 1D [3*685] data to 2D [3, 685] > x, y, z coordinates
-                for (i = 0; i < f.GetLength(0); i++)
-                {
-                    if (!(Math.Abs(f[i]) < 0.000001))
-                    {
-                        laserScannerData[i % 3, i / 3] = f[i];
-                    }
-                }
-
-                return laserScannerData;
-            }
-            // we couldnt get the laserdata, so we return an empty array
-            laserScannerData = new double[0, 0];
-
-            return laserScannerData;
         }
 
         private void WriteToCSV(double[,] multiDimensionalArray, string fileName)

@@ -64,8 +64,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IRobotControl.cs" />
     <Compile Include="RobotControl.cs" />
-    <Compile Include="IRobot.cs" />
     <Compile Include="Layers.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="MainWindow.xaml.cs">

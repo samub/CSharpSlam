@@ -1,16 +1,22 @@
 ﻿namespace CSharpSlam
 {
-    internal interface IRobot
+    internal interface IRobotControl
     {
         int Connect();
-        
+
         void Disconnect();
-        
+
         double[] GetWheelSpeed();
-        //double[,] GetLaserScannerData();
-        
+
         void SetWheelSpeed(double r, double l);
 
         void SetWheelSpeed(double[] linAng);
+
+        void ResetSimulation();
+
+        /// <summary>
+        /// TODO: test function, should be removed later
+        /// </summary>
+        void GetLayers();
     }
 }

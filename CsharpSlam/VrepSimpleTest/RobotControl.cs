@@ -7,7 +7,7 @@ namespace CSharpSlam
     using remoteApiNETWrapper;
     using R = Properties.Resources;
 
-    internal class RobotControl : IRobot
+    internal class RobotControl : IRobotControl
     {
         public const int MapZoom = 50;
         public const int MapSize = 2000;
@@ -16,6 +16,8 @@ namespace CSharpSlam
         private int _handleLeftMotor, _handleRightMotor;
         private int _handleSick;
         private bool _connected;
+        private IntPtr _signalValuePtr;
+        private int _signalLength;
         private Thread _mapBuilderThread;
         private Thread _localizationThread;
 
@@ -31,18 +33,19 @@ namespace CSharpSlam
                 ClientId = _clientId
             };
 
-            Localization.PoseChanged += Localization_PoseChanged;
+            Localization.PoseChanged += PoseChanged;
+            MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
             InitHandlers();
         }
-        
-        public MapBuilder MapBuilder { get; set; }
-        
+
+        private MapBuilder MapBuilder { get; set; }
+
         private Localization Localization { get; set; }
 
         public int Connect()
         {
             // If not connected - try to connect
-            if (!_connected) 
+            if (!_connected)
             {
                 try
                 {
@@ -101,7 +104,8 @@ namespace CSharpSlam
             }
 
             VREPWrapper.simxFinish(_clientId);
-            Localization.PoseChanged -= Localization_PoseChanged;
+            Localization.PoseChanged -= PoseChanged;
+            MapBuilder.RequestLaserScannerDataRefresh -= RequestLaserScannerDataRefresh;
             _mapBuilderThread.Abort();
             _localizationThread.Abort();
         }
@@ -129,9 +133,63 @@ namespace CSharpSlam
             throw new NotImplementedException();
         }
 
-        private void Localization_PoseChanged(object sender, EventArgs e)
+        private double[,] GetLaserScannerData()
+        {
+            double[,] laserScannerData;
+            // reading the laser scanner stream 
+            VREPWrapper.simxReadStringStream(_clientId, R.measuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
+
+            //  Debug.WriteLine(String.Format("test: {0:X8} {1:D} {2:X8}", _signalValuePtr, _signalLength, _signalValuePtr+_signalLength));
+            float[] f = new float[685 * 3];
+            if (_signalLength >= f.GetLength(0))
+            {
+                //we managed to get the laserdatas from Vrep
+                laserScannerData = new double[3, f.GetLength(0) / 3];
+
+                // todo read the latest stream (this is not the latest)
+                int i;
+                unsafe
+                {
+                    float* pp = (float*)_signalValuePtr.ToPointer();
+                    //Debug.WriteLine("pp: " + *pp);
+                    for (i = 0; i < f.GetLength(0); i++)
+                    {
+                        f[i] = *pp++; // pointer to float array 
+                    }
+                }
+                // reshaping the 1D [3*685] data to 2D [3, 685] > x, y, z coordinates
+                for (i = 0; i < f.GetLength(0); i++)
+                {
+                    if (!(Math.Abs(f[i]) < 0.000001))
+                    {
+                        laserScannerData[i % 3, i / 3] = f[i];
+                    }
+                }
+
+                return laserScannerData;
+            }
+            // we couldnt get the laserdata, so we return an empty array
+            laserScannerData = new double[0, 0];
+
+            return laserScannerData;
+        }
+
+        /// <summary>
+        /// TODO: test function, should be removed later
+        /// </summary>
+        public void GetLayers()
+        {
+            MapBuilder.GetLayers();
+        }
+
+        private void PoseChanged(object sender, EventArgs e)
         {
             MapBuilder.Pose = Localization.Pose;
+        }
+
+        private void RequestLaserScannerDataRefresh(object sender, EventArgs e)
+        {
+            MapBuilder.LaserData = GetLaserScannerData();
         }
 
         private void InitHandlers()

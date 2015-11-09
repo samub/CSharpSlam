@@ -10,7 +10,7 @@
         private Pose _pose;
 
         public event EventHandler PoseChanged;
-        
+
         public int ClientId { private get; set; }
 
         public Pose Pose
@@ -19,7 +19,7 @@
             {
                 return _pose;
             }
-            
+
             private set
             {
                 _pose = value;
@@ -50,7 +50,8 @@
             VREPWrapper.simxGetObjectHandle(ClientId, R.neobotix0, out handleNeo0, simx_opmode.oneshot_wait);
             VREPWrapper.simxGetObjectHandle(ClientId, R.neobotix1, out handleNeo1, simx_opmode.oneshot_wait);
             VREPWrapper.simxGetObjectOrientation(ClientId, handleNeo0, handleNeo1, ori, simx_opmode.oneshot_wait);
-            return ori;// x y
+            // x y
+            return ori;
         }
 
         private float[] GetPosition()

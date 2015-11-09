@@ -1,7 +1,6 @@
 ﻿namespace CSharpSlam
 {
     using System;
-    using System.ComponentModel;
     using System.Windows;
     using System.Windows.Media;
     using R = Properties.Resources;
@@ -18,7 +17,7 @@
             RobotControl = new RobotControl();
         }
 
-        private RobotControl RobotControl { get; set; }
+        private IRobotControl RobotControl { get; set; }
 
         private void ButtonConnect_Click(object sender, RoutedEventArgs e)
         {
@@ -91,7 +90,7 @@
         private void ButtonLaserScanTest_Click(object sender, RoutedEventArgs e)
         {
             //test function, should be removed later
-            RobotControl.MapBuilder.GetLayers();
+            RobotControl.GetLayers();
         }
     }
 }
