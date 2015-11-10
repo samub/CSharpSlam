@@ -23,16 +23,11 @@ namespace CSharpSlam
 
         public RobotControl()
         {
-            MapBuilder = new MapBuilder
-            {
-                ClientId = _clientId
-            };
-
+            MapBuilder = new MapBuilder();
             Localization = new Localization
             {
                 ClientId = _clientId
             };
-
             Localization.PoseChanged += PoseChanged;
             MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
             InitHandlers();
@@ -51,7 +46,6 @@ namespace CSharpSlam
                 {
                     _clientId = VREPWrapper.simxStart(R.localhost, 19997, true, true, 5000, 5);
                     Localization.ClientId = _clientId;
-                    MapBuilder.ClientId = _clientId;
                 }
                 catch (DllNotFoundException)
                 {

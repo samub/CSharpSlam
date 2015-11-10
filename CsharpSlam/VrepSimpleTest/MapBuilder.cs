@@ -33,8 +33,6 @@ namespace CSharpSlam
 
         public double[,] LaserData { private get; set; }
 
-        public int ClientId { private get; set; }
-
         public void BuildLayers()
         {
             do
