@@ -11,6 +11,8 @@ namespace CSharpSlam
     {
         public const int MapZoom = 50;
         public const int MapSize = 2000;
+        public const double MinToShow = 0.6;
+
         private int _clientId = -1;
         private int _handleNeo;
         private int _handleLeftMotor, _handleRightMotor;
@@ -131,7 +133,8 @@ namespace CSharpSlam
         {
             double[,] laserScannerData;
             // reading the laser scanner stream 
-            VREPWrapper.simxReadStringStream(_clientId, R.measuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
+            if (VREPWrapper.simxReadStringStream(_clientId, R.measuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming) != 0)
+                return new double[0, 0];
 
             //  Debug.WriteLine(String.Format("test: {0:X8} {1:D} {2:X8}", _signalValuePtr, _signalLength, _signalValuePtr+_signalLength));
             float[] f = new float[685 * 3];
@@ -171,9 +174,9 @@ namespace CSharpSlam
         /// <summary>
         /// TODO: test function, should be removed later
         /// </summary>
-        public void GetLayers()
+        public Layers GetLayers()
         {
-            MapBuilder.GetLayers();
+            return MapBuilder.Layers;
         }
 
         private void PoseChanged(object sender, EventArgs e)

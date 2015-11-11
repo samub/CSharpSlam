@@ -2,14 +2,18 @@
 {
     using System;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Media;
     using R = Properties.Resources;
+    using System.Windows.Media;
+    using System.Windows.Shapes;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
+        public const double MinToShow = 0.6;
         public MainWindow()
         {
             InitializeComponent();
@@ -89,8 +93,33 @@
 
         private void ButtonLaserScanTest_Click(object sender, RoutedEventArgs e)
         {
-            //test function, should be removed later
-            RobotControl.GetLayers();
+            double[,] WallLayer = RobotControl.GetLayers().WallLayer;
+
+            double h = CanvScan.ActualHeight,
+                   w = CanvScan.ActualWidth;
+
+            double min = h < w ? h : w;
+
+            double pixel = min / MapBuilder.MapSize;
+
+            double left = (w - min) / 2,
+                   top = (h - min) / 2;
+
+            for (int x = 0; x < MapBuilder.MapSize; x++)
+                for (int y = 0; y < MapBuilder.MapSize; y++)
+                {
+                    if (WallLayer[x, y] >= MinToShow)
+                    {
+                        Rectangle rect = new Rectangle();
+                        rect.Stroke = Brushes.Black;
+                        rect.StrokeThickness = 1;
+                        rect.Width = 1;
+                        rect.Height = 1;
+                        Canvas.SetLeft(rect, x * pixel + left);
+                        Canvas.SetTop(rect, y * pixel + top);
+                        CanvScan.Children.Add(rect);
+                    }
+                }
         }
     }
 }
