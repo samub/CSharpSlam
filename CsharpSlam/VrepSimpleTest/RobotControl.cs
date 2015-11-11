@@ -11,7 +11,6 @@ namespace CSharpSlam
     {
         public const int MapZoom = 50;
         public const int MapSize = 2000;
-        public const double MinToShow = 0.6;
 
         private int _clientId = -1;
         private int _handleNeo;
@@ -23,6 +22,7 @@ namespace CSharpSlam
         private Thread _mapBuilderThread;
         private Thread _localizationThread;
 
+        private int ind = 0;
         public RobotControl()
         {
             MapBuilder = new MapBuilder();
@@ -30,9 +30,17 @@ namespace CSharpSlam
             {
                 ClientId = _clientId
             };
-            Localization.PoseChanged += PoseChanged;
             MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
+            MapBuilder.CalculatePose += CalculatePose;
             InitHandlers();
+        }
+
+        private void CalculatePose(object sender, EventArgs e)
+        {
+            Localization.CurrentRawDatas = MapBuilder.LaserData;
+            Localization.Layers = MapBuilder.Layers;
+            Localization.CalculatePose();
+            MapBuilder.Pose = Localization.Pose;
         }
 
         private MapBuilder MapBuilder { get; set; }
@@ -62,17 +70,17 @@ namespace CSharpSlam
                     InitHandlers();
 
                     _mapBuilderThread = new Thread(MapBuilder.BuildLayers);
-                    _localizationThread = new Thread(Localization.CalculatePose);
+                    //_localizationThread = new Thread(Localization.CalculatePose);
 
                     try
                     {
-                        _localizationThread.Start();
-                        Thread.Sleep(1000);
+                        //_localizationThread.Start();
+                        //Thread.Sleep(1000);
                         _mapBuilderThread.Start();
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex);
+                        Debug.WriteLine(ex);
                     }
 
                     return 0;
@@ -103,7 +111,7 @@ namespace CSharpSlam
             Localization.PoseChanged -= PoseChanged;
             MapBuilder.RequestLaserScannerDataRefresh -= RequestLaserScannerDataRefresh;
             _mapBuilderThread.Abort();
-            _localizationThread.Abort();
+            //_localizationThread.Abort();
         }
 
         public void ResetSimulation()
@@ -133,12 +141,14 @@ namespace CSharpSlam
         {
             double[,] laserScannerData;
             // reading the laser scanner stream 
-            if (VREPWrapper.simxReadStringStream(_clientId, R.measuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming) != 0)
+            simx_error s = VREPWrapper.simxReadStringStream(_clientId, R.measuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
+            
+            if (s != simx_error.noerror)
                 return new double[0, 0];
-
+            //Debug.WriteLine(s);
             //  Debug.WriteLine(String.Format("test: {0:X8} {1:D} {2:X8}", _signalValuePtr, _signalLength, _signalValuePtr+_signalLength));
             float[] f = new float[685 * 3];
-            if (_signalLength >= f.GetLength(0))
+            if (_signalLength / sizeof(float) >= f.GetLength(0))
             {
                 //we managed to get the laserdatas from Vrep
                 laserScannerData = new double[3, f.GetLength(0) / 3];

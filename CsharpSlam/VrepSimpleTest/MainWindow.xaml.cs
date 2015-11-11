@@ -13,7 +13,7 @@
     /// </summary>
     public partial class MainWindow
     {
-        public const double MinToShow = 0.6;
+        public const double MinToShow = 0.9;
         public MainWindow()
         {
             InitializeComponent();
@@ -88,7 +88,7 @@
 
         private void ButtonClearCanvas_Click(object sender, RoutedEventArgs e)
         {
-            //TODO:
+            CanvScan.Children.Clear();
         }
 
         private void ButtonLaserScanTest_Click(object sender, RoutedEventArgs e)

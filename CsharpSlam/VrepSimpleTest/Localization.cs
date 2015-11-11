@@ -12,6 +12,8 @@
         public event EventHandler PoseChanged;
 
         public int ClientId { private get; set; }
+        public double[,] CurrentRawDatas { private get; set; }
+        public Layers Layers { private get; set; }
 
         public Pose Pose
         {
@@ -29,8 +31,8 @@
 
         public void CalculatePose()
         {
-            do
-            {
+            //do
+            //{
                 float[] pos = GetPosition();
                 float[] ori = GetOrientation();
                 if (pos[0] != 0 && pos[1] != 0 && ori[0] != 0)
@@ -38,9 +40,9 @@
                     Pose = new Pose((int)(pos[2] * RobotControl.MapZoom), (int)(pos[1] * RobotControl.MapZoom), 180.0 * ori[0] / Math.PI);
                 }
                 //Debug.WriteLine("Position: x: " + pos[2] + " y: " + pos[1] + " degree: " + ori[0]);
-                Thread.Sleep(1000);
-            }
-            while (true);
+            //     Thread.Sleep(1000);
+            //}
+            //while (true);
         }
 
         private float[] GetOrientation()

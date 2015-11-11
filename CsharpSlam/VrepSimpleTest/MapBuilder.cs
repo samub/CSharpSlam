@@ -18,8 +18,8 @@ namespace CSharpSlam
         public Pose Pose { private get; set; }
         public double[,] LaserData { get; set; }
 
-
         public event EventHandler RequestLaserScannerDataRefresh;
+        public event EventHandler CalculatePose;
 
         public MapBuilder()
         {
@@ -35,9 +35,16 @@ namespace CSharpSlam
             Thread.Sleep(3000);
             do
             {
-                Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, Pose.Y, Pose.Degree);
+                //Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, Pose.Y, Pose.Degree);
 
                 RequestLaserScannerDataRefresh?.Invoke(this, EventArgs.Empty);
+                if (LaserData.GetLength(0) == 0)
+                {
+                    Thread.Sleep(1000);
+                    continue;
+                }
+                CalculatePose?.Invoke(this, EventArgs.Empty);
+
                 double theta = Pose.Degree / 180 * Math.PI;
                 theta *= -1;
                 for (int i = 0; i < LaserData.GetLength(1); i++)
@@ -49,13 +56,11 @@ namespace CSharpSlam
                     //Debug.WriteLine("Laser Data: " + LaserData[0, i] + " " + LaserData[1, i]);
                 }
                 //if we successfully got the laserdatas we create each layer
-
-                if (LaserData.GetLength(0) > 0)
-                {
-                    CreateWallLayer();
-                    CreateEmptyLayer();
-                    CreateRobotPathLayer();
-                }
+                
+                CreateWallLayer();
+                CreateEmptyLayer();
+                CreateRobotPathLayer();
+                
 
                 Thread.Sleep(1500);
             } while (true);
@@ -65,12 +70,18 @@ namespace CSharpSlam
         {
             for (int i = 0; i < LaserData.GetLength(1); i++)
             {
-                Int32 xW = Convert.ToInt32((LaserData[1, i])) + centerX;
-                Int32 yW = Convert.ToInt32((LaserData[0, i])) + centerY;
-                if (xW > 0 && yW > 0 && xW < MapSize && yW < MapSize)
-                {
-                    Layers.WallLayer[xW, yW] = (1.0 + Layers.WallLayer[xW, yW]) / 2;
+                try {
+                    Int32 xW = Convert.ToInt32((LaserData[1, i])) + centerX;
+                    Int32 yW = Convert.ToInt32((LaserData[0, i])) + centerY;
+                    if (xW > 0 && yW > 0 && xW < MapSize && yW < MapSize)
+                    {
+                        Layers.WallLayer[xW, yW] = (1.0 + Layers.WallLayer[xW, yW]) / 2;
+                    }
                 }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("MapBuilder-CreateWallLayer() Exception: "+e.Message);
+                };
             }
             //write to csv file for testing 
             //WriteToCSV(Layers.WallLayer, "WallLayer");
