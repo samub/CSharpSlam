@@ -99,18 +99,9 @@ namespace CSharpSlam.Properties {
         /// <summary>
         ///   Looks up a localized string similar to neobotix#0.
         /// </summary>
-        internal static string neobotix0 {
+        internal static string neobotix {
             get {
-                return ResourceManager.GetString("neobotix0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to neobotix#1.
-        /// </summary>
-        internal static string neobotix1 {
-            get {
-                return ResourceManager.GetString("neobotix1", resourceCulture);
+                return ResourceManager.GetString("neobotix", resourceCulture);
             }
         }
         
