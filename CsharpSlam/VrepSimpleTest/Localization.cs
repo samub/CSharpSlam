@@ -8,10 +8,14 @@
     internal class Localization
     {
         private Pose _pose;
+        float[] _pos = new float[3];
+        float[] _ori = new float[3];
 
         public event EventHandler PoseChanged;
 
         public int ClientId { private get; set; }
+        public int HandleNeo { private get; set; } // SICKS300 nem lenne jobb?
+
         public double[,] CurrentRawDatas { private get; set; }
         public Layers Layers { private get; set; }
 
@@ -31,45 +35,15 @@
 
         public void CalculatePose()
         {
-            //do
-            //{
-                float[] pos = GetPosition();
-                float[] ori = GetOrientation();
-                if (pos[0] != 0 && pos[1] != 0 && ori[0] != 0)
-                {
-                    Pose = new Pose((int)(pos[2] * RobotControl.MapZoom), (int)(pos[1] * RobotControl.MapZoom), 180.0 * ori[0] / Math.PI);
-                }
-                //Debug.WriteLine("Position: x: " + pos[2] + " y: " + pos[1] + " degree: " + ori[0]);
-            //     Thread.Sleep(1000);
-            //}
-            //while (true);
-        }
+            VREPWrapper.simxGetObjectPosition(ClientId, HandleNeo, -1, _pos, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectOrientation(ClientId, HandleNeo, -1, _ori, simx_opmode.oneshot_wait);
 
-        private float[] GetOrientation()
-        {
-            float[] ori = new float[2];
-            int handleNeo0, handleNeo1;
-            VREPWrapper.simxGetObjectHandle(ClientId, R.neobotix0, out handleNeo0, simx_opmode.oneshot_wait);
-            VREPWrapper.simxGetObjectHandle(ClientId, R.neobotix1, out handleNeo1, simx_opmode.oneshot_wait);
-            VREPWrapper.simxGetObjectOrientation(ClientId, handleNeo0, handleNeo1, ori, simx_opmode.oneshot_wait);
-            // x y
-            return ori;
-        }
+            //mysterious formula
+            if (_ori[0] < 0)
+                _ori[1] = _ori[1] * -1 + (float)Math.PI / 2;
+            else _ori[1] = _ori[1] + (float)Math.PI + (float)Math.PI / 2;
 
-        private float[] GetPosition()
-        {
-            int handleNeo0, handleNeo1;
-            float[] pos = new float[3];
-            VREPWrapper.simxGetObjectHandle(ClientId, R.neobotix0, out handleNeo0, simx_opmode.oneshot_wait);
-            VREPWrapper.simxGetObjectHandle(ClientId, R.neobotix1, out handleNeo1, simx_opmode.oneshot_wait);
-
-            VREPWrapper.simxGetObjectPosition(ClientId, handleNeo0, handleNeo1, pos, simx_opmode.oneshot_wait);
-            //Debug.WriteLine("Position: x: " + pos[2] + " y: " + pos[1] + " z: " + pos[0]);
-            return pos;
-            //Debug.WriteLine(ori[0]+" "+ori[1]);
-            //txtInfo.Text = "x: " + pos[2] + " y: " + pos[1] + " z: " + pos[0];
-
-            //return new float[2] { pos[2], pos[1] };
+            Pose = new Pose((int)(_pos[0] * RobotControl.MapZoom), (int)(_pos[1] * RobotControl.MapZoom), 180.0 * _ori[0] / Math.PI);
         }
 
         private void OnPoseChanged()
@@ -81,11 +55,6 @@
             ////TODO: kitorolni a c#5 kodot es cserelni 6-ra
             ////PoseChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        /*public  Pose GetPose(Type Type, Layers Layers) {
-            Pose pose = new Pose();
-            
-            return pose;
-        }*/
+        
     }
 }
