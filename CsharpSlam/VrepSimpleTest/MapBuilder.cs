@@ -163,7 +163,18 @@ namespace CSharpSlam
         }
         private void CreateRobotPathLayer()
         {
-            Layers.RobotPathLayer[centerX + Pose.X, centerY + Pose.Y] = 1.0;
+            int x = centerX + Pose.X;
+            int y = centerY + Pose.Y;
+            for (int i = x - 2; i < x + 2; i++)
+                for (int h = y - 2; h < y + 2; h++)
+                    try
+                    {
+                        Layers.RobotPathLayer[i, h] = 1.0;
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Szélén vagyunk");
+                    }
         }
 
         private void WriteToCSV(double[,] multiDimensionalArray, string FileName)
@@ -186,6 +197,8 @@ namespace CSharpSlam
 
         static T[,] CreateRectangularArray<T>(IList<T[]> arrays)
         {
+            if (arrays.Count == 0)
+                return new T[0, 0];
             // TODO: Validation and special-casing for arrays.Count == 0
             int minorLength = arrays[0].Length;
             T[,] ret = new T[minorLength, arrays.Count];

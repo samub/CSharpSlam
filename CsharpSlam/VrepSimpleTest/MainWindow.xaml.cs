@@ -7,6 +7,9 @@
     using R = Properties.Resources;
     using System.Windows.Media;
     using System.Windows.Shapes;
+    using System.Windows.Media.Imaging;
+    using System.Threading.Tasks;
+    using System.Windows.Threading;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -14,6 +17,7 @@
     public partial class MainWindow
     {
         public const double MinToShow = 0.9;
+        public static DispatcherTimer timer;
         public MainWindow()
         {
             InitializeComponent();
@@ -40,11 +44,16 @@
                     ButtonConnect.Background = Brushes.IndianRed;
                     ButtonConnect.Content = R.Reconnect;
                     StackControls.Visibility = Visibility.Hidden;
+                    timer.Stop();
                     break;
                 default:
                     ButtonConnect.Background = Brushes.LightSeaGreen;
                     StackControls.Visibility = Visibility.Visible;
                     ButtonConnect.Content = R.Disconnect;
+                    timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromMilliseconds(5000);
+                    timer.Tick += MapUpdate;
+                    timer.Start();
                     break;
             }
         }
@@ -88,38 +97,95 @@
 
         private void ButtonClearCanvas_Click(object sender, RoutedEventArgs e)
         {
-            CanvScan.Children.Clear();
+            //CanvScan.Children.Clear();
         }
 
         private void ButtonLaserScanTest_Click(object sender, RoutedEventArgs e)
         {
-            double[,] WallLayer = RobotControl.GetLayers().WallLayer;
+            Layers layers = RobotControl.GetLayers();
+            PixelFormat pf = PixelFormats.Rgb24;
+            int width, height, rawStride;
+            byte[] pixelData;
 
-            double h = CanvScan.ActualHeight,
-                   w = CanvScan.ActualWidth;
+            width = /*10;*/ MapBuilder.MapSize;
+            height = /*10; */ MapBuilder.MapSize;
+            rawStride = (width * pf.BitsPerPixel + 7) / 8;
+            pixelData = new byte[rawStride * height];
+            
+            //SetPixel(5, 5, Colors.Red, pixelData, rawStride);
 
-            double min = h < w ? h : w;
 
-            double pixel = min / MapBuilder.MapSize;
-
-            double left = (w - min) / 2,
-                   top = (h - min) / 2;
-
-            for (int x = 0; x < MapBuilder.MapSize; x++)
-                for (int y = 0; y < MapBuilder.MapSize; y++)
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
                 {
-                    if (WallLayer[x, y] >= MinToShow)
+                    if (layers.RobotPathLayer[x, y] >= MinToShow)
                     {
-                        Rectangle rect = new Rectangle();
-                        rect.Stroke = Brushes.Black;
-                        rect.StrokeThickness = 1;
-                        rect.Width = 1;
-                        rect.Height = 1;
-                        Canvas.SetLeft(rect, x * pixel + left);
-                        Canvas.SetTop(rect, y * pixel + top);
-                        CanvScan.Children.Add(rect);
+                        SetPixel(x, y, Colors.Red, pixelData, rawStride);
+                    }
+                    else if (layers.WallLayer[x, y] >= MinToShow)
+                    {
+                        SetPixel(x, y, Colors.LightBlue, pixelData, rawStride);
+                    }
+                    else if (layers.EmptyLayer[x, y] >= MinToShow)
+                    {
+                        SetPixel(x, y, Colors.Gray, pixelData, rawStride);
                     }
                 }
+                
+
+
+            BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, pf, null, pixelData, rawStride);
+            ImageScan.Source = bitmap;
+        }
+
+        void MapUpdate(object o, EventArgs e)
+        {
+            MapRender();
+        }
+        void MapRender()
+        {
+            Layers layers = RobotControl.GetLayers();
+            PixelFormat pf = PixelFormats.Rgb24;
+            int width, height, rawStride;
+            byte[] pixelData;
+
+            width = /*10;*/ MapBuilder.MapSize;
+            height = /*10; */ MapBuilder.MapSize;
+            rawStride = (width * pf.BitsPerPixel + 7) / 8;
+            pixelData = new byte[rawStride * height];
+
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                {
+                    if (cbRobotLayer.IsChecked == true && layers.RobotPathLayer[x, y] >= MinToShow)
+                    {
+                        SetPixel(x, y, Colors.Red, pixelData, rawStride);
+                    }
+                    else if (cbWallLayer.IsChecked == true && layers.WallLayer[x, y] >= MinToShow)
+                    {
+                        SetPixel(x, y, Colors.LightBlue, pixelData, rawStride);
+                    }
+                    else if (cbEmptyLayer.IsChecked == true && layers.EmptyLayer[x, y] >= MinToShow)
+                    {
+                        SetPixel(x, y, Colors.Gray, pixelData, rawStride);
+                    }
+                }
+            BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, pf, null, pixelData, rawStride);
+            ImageScan.Source = bitmap;
+        }
+
+        void SetPixel(int x, int y, Color c, byte[] buffer, int rawStride)
+        {
+            int xIndex = x * 3;
+            int yIndex = y * rawStride;
+            buffer[xIndex + yIndex] = c.R;
+            buffer[xIndex + yIndex + 1] = c.G;
+            buffer[xIndex + yIndex + 2] = c.B;
+        }
+
+        private void cbChange(object sender, RoutedEventArgs e)
+        {
+            MapRender();
         }
     }
 }

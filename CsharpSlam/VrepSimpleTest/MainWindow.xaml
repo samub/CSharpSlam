@@ -15,14 +15,15 @@
             <Button Margin="4" Click="ButtonRight_Click" Content="Right" x:Name="ButtonRight" />
             <Button Margin="4" Click="ButtonStop_Click"  Content="Stop" x:Name="ButtonStop" Background="IndianRed"/>
             <Button Margin="4" Click="ButtonResetSim_Click"  Content="Reset simulation" x:Name="ButtonResetSim" Background="LightCoral"/>
-            <Button Margin="4" Click="ButtonLaserScanTest_Click"  x:Name="ButtonScan" >Laser Scan test</Button>
-            <Button Margin="4" Click="ButtonClearCanvas_Click" x:Name="ButtonClearCanvas">Clear canvas</Button>
+            <CheckBox x:Name="cbRobotLayer" Content="Robot Path Layer" Click="cbChange"/>
+            <CheckBox x:Name="cbWallLayer" Content="Wall Layer" Click="cbChange"/>
+            <CheckBox x:Name="cbEmptyLayer" Content="Empty Layer" Click="cbChange"/>
             <!--<TextBlock x:Name="TxtData" Margin="4" Text="{Binding PositionString}" />
             <TextBlock x:Name="TxtInfo" Margin="4" Text="{Binding WheelString}"></TextBlock>-->
             <!-- <TextBox x:Name="txLength" Margin="4" Text="685" />  -->
         </StackPanel>
         <Grid Margin="205,0,0,0">
-            <Canvas Background="LightBlue" x:Name="CanvScan" Margin="0,0,128,10" />
+            <Image x:Name="ImageScan" Margin="0,0,128,10" />
         </Grid>
     </Grid>
 </Window>
