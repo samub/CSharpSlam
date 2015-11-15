@@ -136,7 +136,8 @@ namespace CSharpSlam
                     int numerator = longest >> 1;
                     for (int z = 0; z <= longest; z++)
                     {
-                        Layers.EmptyLayer[x, y] = (1.0 + Layers.EmptyLayer[x, y]) / 2;
+                        if(x != x2 && y != y2)
+                            Layers.EmptyLayer[x, y] = (1.0 + Layers.EmptyLayer[x, y]) / 2;
                         numerator += shortest;
                         if (!(numerator < longest))
                         {
