@@ -13,7 +13,7 @@ namespace CSharpSlam
         public const int MapSize = 2000;
 
         private int _clientId = -1;
-        private int _handleNeo;
+        //private int _handleNeo;
         private int _handleLeftMotor, _handleRightMotor;
         private int _handleSick;
         private bool _connected;
@@ -28,7 +28,7 @@ namespace CSharpSlam
             MapBuilder = new MapBuilder();
             Localization = new Localization
             {
-                ClientId = _clientId , HandleNeo = _handleNeo
+                ClientId = _clientId , HandleSick = _handleSick
             };
             MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
             MapBuilder.CalculatePose += CalculatePose;
@@ -201,13 +201,12 @@ namespace CSharpSlam
 
         private void InitHandlers()
         {
-            VREPWrapper.simxGetObjectHandle(_clientId, R.neobotix, out _handleNeo, simx_opmode.oneshot_wait);
-            Debug.WriteLine("Handle neobotix#0: " + _handleNeo);
             VREPWrapper.simxGetObjectHandle(_clientId, R.wheelLeft0, out _handleLeftMotor, simx_opmode.oneshot_wait);
-            Debug.WriteLine("Handle left motor #0: " + _handleLeftMotor);
+            Debug.WriteLine("Handle left motor: " + _handleLeftMotor);
             VREPWrapper.simxGetObjectHandle(_clientId, R.wheelRight0, out _handleRightMotor, simx_opmode.oneshot_wait);
-            Debug.WriteLine("Handle right motor #0: " + _handleRightMotor);
-            //VREPWrapper.simxGetObjectHandle(_clientId, R.SICKS300, out _handleSick, simx_opmode.oneshot_wait);
+            Debug.WriteLine("Handle right motor: " + _handleRightMotor);
+            VREPWrapper.simxGetObjectHandle(_clientId, R.SICKS300, out _handleSick, simx_opmode.oneshot_wait);
+            Debug.WriteLine("Handle laser scanner: " + _handleSick);
         }
     }
 }

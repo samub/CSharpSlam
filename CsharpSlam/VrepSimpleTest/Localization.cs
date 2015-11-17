@@ -8,13 +8,13 @@
     internal class Localization
     {
         private Pose _pose;
-        float[] _pos = new float[3];
-        float[] _ori = new float[3];
+        private float[] _pos = new float[3];
+        private float[] _ori = new float[3];
 
         public event EventHandler PoseChanged;
 
         public int ClientId { private get; set; }
-        public int HandleNeo { private get; set; } // SICKS300 nem lenne jobb?
+        public int HandleSick { private get; set; }
 
         public double[,] CurrentRawDatas { private get; set; }
         public Layers Layers { private get; set; }
@@ -35,8 +35,8 @@
 
         public void CalculatePose()
         {
-            VREPWrapper.simxGetObjectPosition(ClientId, HandleNeo, -1, _pos, simx_opmode.oneshot_wait);
-            VREPWrapper.simxGetObjectOrientation(ClientId, HandleNeo, -1, _ori, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectPosition(ClientId, HandleSick, -1, _pos, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectOrientation(ClientId, HandleSick, -1, _ori, simx_opmode.oneshot_wait);
 
             //mysterious formula
             if (_ori[0] < 0)
