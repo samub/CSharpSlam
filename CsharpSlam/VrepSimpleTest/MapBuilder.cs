@@ -163,7 +163,10 @@ namespace CSharpSlam
         }
         private void CreateRobotPathLayer()
         {
-            int x = centerX + Pose.X;
+            Pose p = new Pose(Pose.X + centerX, Pose.Y + centerY, Pose.Degree);
+            if(!Layers.RobotPathList.Contains(p))
+                Layers.RobotPathList.Add(p);
+            /*int x = centerX + Pose.X;
             int y = centerY + Pose.Y;
             for (int i = x - 2; i < x + 2; i++)
                 for (int h = y - 2; h < y + 2; h++)
@@ -174,7 +177,7 @@ namespace CSharpSlam
                     catch (Exception ex)
                     {
                         Debug.WriteLine("Szélén vagyunk");
-                    }
+                    }*/
         }
 
         private void WriteToCSV(double[,] multiDimensionalArray, string FileName)

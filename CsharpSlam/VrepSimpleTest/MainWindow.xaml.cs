@@ -102,13 +102,13 @@
 
         private void ButtonLaserScanTest_Click(object sender, RoutedEventArgs e)
         {
-            Layers layers = RobotControl.GetLayers();
+            /*Layers layers = RobotControl.GetLayers();
             PixelFormat pf = PixelFormats.Rgb24;
             int width, height, rawStride;
             byte[] pixelData;
 
-            width = /*10;*/ MapBuilder.MapSize;
-            height = /*10; */ MapBuilder.MapSize;
+            width =  MapBuilder.MapSize;
+            height = MapBuilder.MapSize;
             rawStride = (width * pf.BitsPerPixel + 7) / 8;
             pixelData = new byte[rawStride * height];
             
@@ -135,7 +135,7 @@
 
 
             BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, pf, null, pixelData, rawStride);
-            ImageScan.Source = bitmap;
+            ImageScan.Source = bitmap;*/
         }
 
         void MapUpdate(object o, EventArgs e)
@@ -157,11 +157,7 @@
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                 {
-                    if (cbRobotLayer.IsChecked == true && layers.RobotPathLayer[x, y] >= MinToShow)
-                    {
-                        SetPixel(x, y, Colors.Red, pixelData, rawStride);
-                    }
-                    else if (cbWallLayer.IsChecked == true && layers.WallLayer[x, y] >= MinToShow)
+                    if (cbWallLayer.IsChecked == true && layers.WallLayer[x, y] >= MinToShow)
                     {
                         SetPixel(x, y, Colors.LightBlue, pixelData, rawStride);
                     }
@@ -169,6 +165,14 @@
                     {
                         SetPixel(x, y, Colors.Gray, pixelData, rawStride);
                     }
+                }
+            if(cbRobotLayer.IsChecked == true)
+            foreach (Pose p in layers.RobotPathList)
+                {
+                    for (int x = p.X - 5; x < p.X + 5; x++)
+                        for (int y = p.Y - 5; y < p.Y + 5; y++)
+                            if (y >= 0 && y < MapBuilder.MapSize && x >= 0 && x < MapBuilder.MapSize)
+                                SetPixel(x, y, Colors.Red, pixelData, rawStride);
                 }
             BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, pf, null, pixelData, rawStride);
             ImageScan.Source = bitmap;

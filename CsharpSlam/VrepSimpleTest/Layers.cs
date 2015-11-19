@@ -1,4 +1,6 @@
-﻿namespace CSharpSlam
+﻿using System.Collections.Generic;
+
+namespace CSharpSlam
 {
     class Layers
     {
@@ -7,10 +9,10 @@
         {
             WallLayer = new double[size, size];
             EmptyLayer = new double[size, size];
-            RobotPathLayer = new double[size, size];
+            RobotPathList = new List<Pose>();
         }
         public double[,] WallLayer;
         public double[,] EmptyLayer;
-        public double[,] RobotPathLayer;
+        public List<Pose> RobotPathList;
     }
 }
