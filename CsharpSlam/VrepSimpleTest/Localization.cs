@@ -33,7 +33,7 @@
             }
         }
 
-        public void CalculatePose()
+        public void GetPose()
         {
             VREPWrapper.simxGetObjectPosition(ClientId, HandleSick, -1, _pos, simx_opmode.oneshot_wait);
             VREPWrapper.simxGetObjectOrientation(ClientId, HandleSick, -1, _ori, simx_opmode.oneshot_wait);

@@ -39,7 +39,7 @@ namespace CSharpSlam
         {
             Localization.CurrentRawDatas = MapBuilder.LaserData;
             Localization.Layers = MapBuilder.Layers;
-            Localization.CalculatePose();
+            Localization.GetPose();
             MapBuilder.Pose = Localization.Pose;
         }
 
@@ -70,7 +70,7 @@ namespace CSharpSlam
                     InitHandlers();
 
                     _mapBuilderThread = new Thread(MapBuilder.BuildLayers);
-                    //_localizationThread = new Thread(Localization.CalculatePose);
+                    //_localizationThread = new Thread(Localization.GetPose);
 
                     try
                     {

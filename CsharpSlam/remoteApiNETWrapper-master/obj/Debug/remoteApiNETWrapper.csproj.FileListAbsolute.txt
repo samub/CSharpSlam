@@ -24,3 +24,7 @@ C:\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remot
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.csprojResolveAssemblyReference.cache
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.dll
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb
+C:\Users\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.dll
+C:\Users\Program Files (x86)\V-REP3\V-REP_PRO_EDU\programming\remoteApiSharedLib\remoteApiNETWrapper.pdb
+C:\Users\Jency\Documents\GitHubVisualStudio\samub\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.dll
+C:\Users\Jency\Documents\GitHubVisualStudio\samub\CSharpSlam\CsharpSlam\remoteApiNETWrapper-master\obj\Debug\remoteApiNETWrapper.pdb

@@ -43,3 +43,4 @@ C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSim
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\CsharpSlam.csproj.GenerateResource.Cache
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.exe
 C:\Users\Gábor\Documents\GitHubVisualStudioPublic\CSharpSlam\CsharpSlam\VrepSimpleTest\obj\Debug\VrepSimpleTest.pdb
+C:\Users\Jency\Documents\GitHubVisualStudio\samub\CSharpSlam\CsharpSlam\VrepSimpleTest\bin\Debug\Neobotix_mapping_VREP.exe.config
