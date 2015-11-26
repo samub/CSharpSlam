@@ -16,6 +16,7 @@ namespace CSharpSlam
         //private int _handleNeo;
         private int _handleLeftMotor, _handleRightMotor;
         private int _handleSick;
+        private int _handleRelative;
         private bool _connected;
         private IntPtr _signalValuePtr;
         private int _signalLength;
@@ -28,7 +29,7 @@ namespace CSharpSlam
             MapBuilder = new MapBuilder();
             Localization = new Localization
             {
-                ClientId = _clientId , HandleSick = _handleSick
+                ClientId = _clientId , HandleSick = _handleSick, HandleRelative = _handleRelative
             };
             MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
             MapBuilder.CalculatePose += CalculatePose;
@@ -207,6 +208,8 @@ namespace CSharpSlam
             Debug.WriteLine("Handle right motor: " + _handleRightMotor);
             VREPWrapper.simxGetObjectHandle(_clientId, R.SICKS300, out _handleSick, simx_opmode.oneshot_wait);
             Debug.WriteLine("Handle laser scanner: " + _handleSick);
+
+            VREPWrapper.simxGetObjectHandle(_clientId, "origo", out _handleRelative, simx_opmode.oneshot_wait);
         }
     }
 }
