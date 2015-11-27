@@ -26,14 +26,7 @@ namespace CSharpSlam
         private int ind = 0;
         public RobotControl()
         {
-            MapBuilder = new MapBuilder();
-            Localization = new Localization
-            {
-                ClientId = _clientId , HandleSick = _handleSick, HandleRelative = _handleRelative
-            };
-            MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
-            MapBuilder.CalculatePose += CalculatePose;
-            InitHandlers();
+
         }
 
         private void CalculatePose(object sender, EventArgs e)
@@ -56,7 +49,6 @@ namespace CSharpSlam
                 try
                 {
                     _clientId = VREPWrapper.simxStart(R.localhost, 19997, true, true, 5000, 5);
-                    Localization.ClientId = _clientId;
                 }
                 catch (DllNotFoundException)
                 {
@@ -68,7 +60,17 @@ namespace CSharpSlam
                 {
                     Debug.WriteLine("Connected to V-REP");
                     _connected = true;
+
                     InitHandlers();
+                    MapBuilder = new MapBuilder();
+                    Localization = new Localization
+                    {
+                        ClientId = _clientId,
+                        HandleSick = _handleSick,
+                        HandleRelative = _handleRelative
+                    };
+                    MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
+                    MapBuilder.CalculatePose += CalculatePose;
 
                     _mapBuilderThread = new Thread(MapBuilder.BuildLayers);
                     //_localizationThread = new Thread(Localization.GetPose);
