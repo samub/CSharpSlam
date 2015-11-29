@@ -2,10 +2,6 @@
 {
     public struct Pose
     {
-        /*public enum Type
-        {
-            Raw, Calculated
-        }*/
         public readonly int X;
         public readonly int Y;
         public readonly double Degree;
