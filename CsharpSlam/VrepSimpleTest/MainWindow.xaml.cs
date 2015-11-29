@@ -146,6 +146,7 @@ namespace CSharpSlam
 
         private void MapRender()
         {
+            //Lekérdezzük a layereket majd létrehozunk egy annyi képpontból álló bitmapet mint amekkora a felbontása a térképünknek, majd a bitmapen kirajzoljuk a térkép adatait a beállítások szerint.
             Layers layers = RobotControl.GetLayers();
             PixelFormat pf = PixelFormats.Rgb24;
 
