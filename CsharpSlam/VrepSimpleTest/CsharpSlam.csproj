@@ -65,6 +65,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="IRobotControl.cs" />
+    <Compile Include="MessageBoxHelper.cs" />
     <Compile Include="RobotControl.cs" />
     <Compile Include="Layers.cs" />
     <Compile Include="Localization.cs" />
