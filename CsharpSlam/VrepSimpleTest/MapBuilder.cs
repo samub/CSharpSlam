@@ -35,7 +35,8 @@ namespace CSharpSlam
             Thread.Sleep(3000);
             do
             {
-                
+                //Lézer szkenner adatok lekérdezése
+                //Ha hibás 1mp várakozás
                 RequestLaserScannerDataRefresh?.Invoke(this, EventArgs.Empty);
                 if (LaserData.GetLength(0) == 0)
                 {
@@ -50,13 +51,14 @@ namespace CSharpSlam
                     if (Math.Sqrt(LaserData[0, i] * LaserData[0, i] + LaserData[1, i] * LaserData[1, i]) > 0.8)
                         ld.Add(new double[] { LaserData[0, i], LaserData[1, i] });
                 }
-                //WriteToCSV(LaserData, "laserOriginTEST");
                 LaserData = CreateRectangularArray(ld);
-                //WriteToCSV(LaserData, "laserNewTEST");
+
+                //Pozició kalkulálás a Lokalizáció osztály segítségével.
                 CalculatePose?.Invoke(this, EventArgs.Empty);
+
                 Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, Pose.Y, Pose.Degree);
 
-
+                //A lézerszkenner adatainak transzformálása (eltolása / elforgatása) a pozició szerint.
                 double theta = Pose.Degree / 180 * Math.PI;
                 theta *= -1;
                 for (int i = 0; i < LaserData.GetLength(1); i++)
@@ -65,21 +67,20 @@ namespace CSharpSlam
                     double tmpy = Math.Sin(theta) * LaserData[0, i] + Math.Cos(theta) * LaserData[1, i];
                     LaserData[0, i] = tmpx * RobotControl.MapZoom + Pose.X;
                     LaserData[1, i] = tmpy * RobotControl.MapZoom + Pose.Y;
-                    //Debug.WriteLine("Laser Data: " + LaserData[0, i] + " " + LaserData[1, i]);
                 }
-                //if we successfully got the laserdatas we create each layer
                 
+                //Layerek kalkulációja.
                 CreateWallLayer();
                 CreateEmptyLayer();
                 CreateRobotPathLayer();
                 
-
                 Thread.Sleep(1500);
             } while (true);
         }
 
         private void CreateWallLayer()
         {
+            //A lézerrel mért,adatok szerint növeljük az adott kordinátán lévő fal valószínűségét.
             for (int i = 0; i < LaserData.GetLength(1); i++)
             {
                 try {
@@ -95,15 +96,12 @@ namespace CSharpSlam
                     Debug.WriteLine("MapBuilder-CreateWallLayer() Exception: "+e.Message);
                 };
             }
-            //write to csv file for testing 
-            //WriteToCSV(Layers.WallLayer, "WallLayer");
-
         }
         private void CreateEmptyLayer()
         {
             int xx = centerX + Pose.X;
             int yy = centerY + Pose.Y;
-
+            //A lézerrel mért,adatok szerint növeljük a robot és a fal közötti pontokon az üresség valószínűségét.
             for (int i = 0; i < LaserData.GetLength(1); i++)
             {
                 try
@@ -113,11 +111,7 @@ namespace CSharpSlam
                     Int32 x2 = Convert.ToInt32((LaserData[0, i])) + centerX;
                     Int32 y2 = Convert.ToInt32((LaserData[1, i])) + centerY;
 
-                    // kell ez ? Layers.WallLayer[Xend, Yend] = (0.0 + Layers.WallLayer[Xend, Yend]) / 2;
-
-                    // a ket pont kozott Layers.EmptyLayer[xW, yW] = (1.0 + Layers.WallLayer[xW, yW]) / 2;
-
-                    //bresenham's algo
+                    //bresenham's algoritmus
                     int w = x2 - x;
                     int h = y2 - y;
                     int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
@@ -159,25 +153,13 @@ namespace CSharpSlam
                     continue;
                 }
             }
-            //WriteToCSV(Layers.EmptyLayer, "emptylayerTEST");
         }
         private void CreateRobotPathLayer()
         {
+            //Hozzáadjuk a robot aktuális pozicióját a listához.
             Pose p = new Pose(Pose.X + centerX, Pose.Y + centerY, Pose.Degree);
             if(!Layers.RobotPathList.Contains(p))
                 Layers.RobotPathList.Add(p);
-            /*int x = centerX + Pose.X;
-            int y = centerY + Pose.Y;
-            for (int i = x - 2; i < x + 2; i++)
-                for (int h = y - 2; h < y + 2; h++)
-                    try
-                    {
-                        Layers.RobotPathLayer[i, h] = 1.0;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("Szélén vagyunk");
-                    }*/
         }
 
         private void WriteToCSV(double[,] multiDimensionalArray, string FileName)
@@ -191,15 +173,13 @@ namespace CSharpSlam
                     item += multiDimensionalArray[x, y] + ";";
                 }
                 item += (Environment.NewLine);
-            }       /*var enumerator = multiDimensionalArray.Cast<double>()
-                        .Select((s, i) => (i + 1) % MapSize == 0 ? string.Concat(s, Environment.NewLine) : string.Concat(s, ";"));
-
-                    var item = String.Join("", enumerator.ToArray<string>());*/
+            }
                     File.WriteAllText(path, item);
         }
 
         static T[,] CreateRectangularArray<T>(IList<T[]> arrays)
         {
+            //Listából 2 dimaneziós tömb
             if (arrays.Count == 0)
                 return new T[0, 0];
             // TODO: Validation and special-casing for arrays.Count == 0
