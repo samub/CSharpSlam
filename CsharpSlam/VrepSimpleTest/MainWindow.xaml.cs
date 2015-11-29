@@ -233,12 +233,12 @@ namespace CSharpSlam
 
         private void ButtonLeft_Click(object sender, RoutedEventArgs e)
         {
-            RobotControl.SetWheelSpeed(-SliderRobotSpeed.Value, SliderRobotSpeed.Value);
+            RobotControl.SetWheelSpeed(0 , SliderRobotSpeed.Value);
         }
 
         private void ButtonRight_Click(object sender, RoutedEventArgs e)
         {
-            RobotControl.SetWheelSpeed(SliderRobotSpeed.Value, -SliderRobotSpeed.Value);
+            RobotControl.SetWheelSpeed(SliderRobotSpeed.Value, 0);
         }
 
         private void ButtonStop_Click(object sender, RoutedEventArgs e)
