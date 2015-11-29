@@ -126,22 +126,37 @@
   <data name="ErrorMessage_DLL" xml:space="preserve">
     <value>remoteApi.dll missing</value>
   </data>
-  <data name="neobotix" xml:space="preserve">
+  <data name="Neobotix" xml:space="preserve">
     <value>neobotix#0</value>
   </data>
-  <data name="measuredData0" xml:space="preserve">
+  <data name="MeasuredData0" xml:space="preserve">
     <value>measuredDataAtThisTime0</value>
   </data>
-  <data name="wheelLeft0" xml:space="preserve">
+  <data name="WheelLeft0" xml:space="preserve">
     <value>wheel_left#0</value>
   </data>
-  <data name="wheelRight0" xml:space="preserve">
+  <data name="WheelRight0" xml:space="preserve">
     <value>wheel_right#0</value>
   </data>
   <data name="SICKS300" xml:space="preserve">
     <value>SICK_S300_fast#0</value>
   </data>
-  <data name="localhost" xml:space="preserve">
+  <data name="Localhost" xml:space="preserve">
     <value>127.0.0.1</value>
+  </data>
+  <data name="TestRobotIP_001" xml:space="preserve">
+    <value>192.168.1.233</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Connect</value>
+  </data>
+  <data name="Origo" xml:space="preserve">
+    <value>origo</value>
+  </data>
+  <data name="StartSimulation" xml:space="preserve">
+    <value>Start simulation</value>
+  </data>
+  <data name="StopSimulation" xml:space="preserve">
+    <value>Stop simulation</value>
   </data>
 </root>

@@ -14,7 +14,9 @@
         public event EventHandler PoseChanged;
 
         public int ClientId { private get; set; }
+
         public int HandleSick { private get; set; }
+
         public int HandleRelative { private get; set; }
 
         public double[,] CurrentRawDatas { private get; set; }

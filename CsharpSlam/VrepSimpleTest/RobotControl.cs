@@ -7,13 +7,19 @@ namespace CSharpSlam
     using remoteApiNETWrapper;
     using R = Properties.Resources;
 
+    public enum SimulationCommand
+    {
+        Stop = 0,
+        Start = 1,
+        Reset = 2
+    }
+
     internal class RobotControl : IRobotControl
     {
         public const int MapZoom = 50;
         public const int MapSize = 2000;
 
         private int _clientId = -1;
-        //private int _handleNeo;
         private int _handleLeftMotor, _handleRightMotor;
         private int _handleSick;
         private int _handleRelative;
@@ -21,34 +27,44 @@ namespace CSharpSlam
         private IntPtr _signalValuePtr;
         private int _signalLength;
         private Thread _mapBuilderThread;
-        //private Thread _localizationThread;
-
+        private bool _simulationIsRunning;
         private int ind = 0;
+
         public RobotControl()
         {
-
-        }
-
-        private void CalculatePose(object sender, EventArgs e)
-        {
-            Localization.CurrentRawDatas = MapBuilder.LaserData;
-            Localization.Layers = MapBuilder.Layers;
-            Localization.GetPose();
-            MapBuilder.Pose = Localization.Pose;
+            MapBuilder = new MapBuilder();
+            Localization = new Localization();
         }
 
         private MapBuilder MapBuilder { get; set; }
 
         private Localization Localization { get; set; }
 
-        public int Connect()
+        public bool SimulationIsRunning
+        {
+            get { return _simulationIsRunning; }
+            set
+            {
+                _simulationIsRunning = value;
+                OnSimulationStateChanged();
+            }
+        }
+
+        public event EventHandler SimulationStateChanged;
+
+        public void OnSimulationStateChanged()
+        {
+            SimulationStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public int Connect(string host)
         {
             // If not connected - try to connect
             if (!_connected)
             {
                 try
                 {
-                    _clientId = VREPWrapper.simxStart(R.localhost, 19997, true, true, 5000, 5);
+                    _clientId = VREPWrapper.simxStart(host, 19997, true, true, 5000, 5);
                 }
                 catch (DllNotFoundException)
                 {
@@ -61,44 +77,19 @@ namespace CSharpSlam
                     Debug.WriteLine("Connected to V-REP");
                     _connected = true;
 
-                    InitHandlers();
-                    MapBuilder = new MapBuilder();
-                    Localization = new Localization
-                    {
-                        ClientId = _clientId,
-                        HandleSick = _handleSick,
-                        HandleRelative = _handleRelative
-                    };
-                    MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
-                    MapBuilder.CalculatePose += CalculatePose;
-
-                    _mapBuilderThread = new Thread(MapBuilder.BuildLayers);
-                    //_localizationThread = new Thread(Localization.GetPose);
-
-                    try
-                    {
-                        //_localizationThread.Start();
-                        //Thread.Sleep(1000);
-                        _mapBuilderThread.Start();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex);
-                    }
-
                     return 0;
                 }
 
                 Debug.WriteLine("Error connecting to V-REP");
-                MessageBox.Show("Error connecting to V-REP :(");
+                MessageBox.Show("Error connecting to V-REP");
                 _connected = false;
 
                 return -1;
             }
 
-            VREPWrapper.simxFinish(_clientId);
-            _connected = false;
+            Disconnect();
             Debug.WriteLine("Disconnected from V-REP");
+            _connected = false;
 
             return -2;
         }
@@ -110,18 +101,70 @@ namespace CSharpSlam
                 return;
             }
 
-            VREPWrapper.simxFinish(_clientId);
-            Localization.PoseChanged -= PoseChanged;
-            MapBuilder.RequestLaserScannerDataRefresh -= RequestLaserScannerDataRefresh;
-            _mapBuilderThread.Abort();
-            //_localizationThread.Abort();
+            SetSimulationState(SimulationCommand.Stop);
+            Thread.Sleep(1000);
+            VREPWrapper.simxFinish(-1);
         }
 
-        public void ResetSimulation()
+        public void SetSimulationState(SimulationCommand command)
+        {
+            switch (command)
+            {
+                case SimulationCommand.Stop:
+                    StopSimulation();
+                    break;
+                case SimulationCommand.Start:
+                    StartSimulation();
+                    break;
+                case SimulationCommand.Reset:
+                    //StopSimulation();
+                    VREPWrapper.simxStopSimulation(_clientId, simx_opmode.oneshot_wait);
+                    Thread.Sleep(400);
+                    //StartSimulation();
+                    VREPWrapper.simxStartSimulation(_clientId, simx_opmode.oneshot_wait);
+                    break;
+            }
+        }
+
+        private void StartSimulation()
+        {
+            VREPWrapper.simxGetObjectHandle(_clientId, R.WheelLeft0, out _handleLeftMotor, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectHandle(_clientId, R.WheelRight0, out _handleRightMotor, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectHandle(_clientId, R.SICKS300, out _handleSick, simx_opmode.oneshot_wait);
+            VREPWrapper.simxGetObjectHandle(_clientId, R.Origo, out _handleRelative, simx_opmode.oneshot_wait);
+
+            Debug.WriteLine("Handle left motor: " + _handleLeftMotor);
+            Debug.WriteLine("Handle right motor: " + _handleRightMotor);
+            Debug.WriteLine("Handle laser scanner: " + _handleSick);
+
+            Localization.ClientId = _clientId;
+            Localization.HandleSick = _handleSick;
+            Localization.HandleRelative = _handleRelative;
+            MapBuilder.RequestLaserScannerDataRefresh += RequestLaserScannerDataRefresh;
+            MapBuilder.CalculatePose += CalculatePose;
+
+            _mapBuilderThread = new Thread(MapBuilder.BuildLayers);
+
+            try
+            {
+                _mapBuilderThread.Start();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            VREPWrapper.simxStartSimulation(_clientId, simx_opmode.oneshot_wait);
+            SimulationIsRunning = true;
+        }
+
+        private void StopSimulation()
         {
             VREPWrapper.simxStopSimulation(_clientId, simx_opmode.oneshot_wait);
-            Thread.Sleep(400);
-            VREPWrapper.simxStartSimulation(_clientId, simx_opmode.oneshot_wait);
+            SimulationIsRunning = false;
+            _mapBuilderThread?.Abort();
+            Localization.PoseChanged -= PoseChanged;
+            MapBuilder.RequestLaserScannerDataRefresh -= RequestLaserScannerDataRefresh;
         }
 
         public double[] GetWheelSpeed()
@@ -144,8 +187,8 @@ namespace CSharpSlam
         {
             double[,] laserScannerData;
             // reading the laser scanner stream 
-            simx_error s = VREPWrapper.simxReadStringStream(_clientId, R.measuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
-            
+            simx_error s = VREPWrapper.simxReadStringStream(_clientId, R.MeasuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
+
             if (s != simx_error.noerror)
                 return new double[0, 0];
             //Debug.WriteLine(s);
@@ -192,6 +235,14 @@ namespace CSharpSlam
             return MapBuilder.Layers;
         }
 
+        private void CalculatePose(object sender, EventArgs e)
+        {
+            Localization.CurrentRawDatas = MapBuilder.LaserData;
+            Localization.Layers = MapBuilder.Layers;
+            Localization.GetPose();
+            MapBuilder.Pose = Localization.Pose;
+        }
+
         private void PoseChanged(object sender, EventArgs e)
         {
             MapBuilder.Pose = Localization.Pose;
@@ -200,18 +251,6 @@ namespace CSharpSlam
         private void RequestLaserScannerDataRefresh(object sender, EventArgs e)
         {
             MapBuilder.LaserData = GetLaserScannerData();
-        }
-
-        private void InitHandlers()
-        {
-            VREPWrapper.simxGetObjectHandle(_clientId, R.wheelLeft0, out _handleLeftMotor, simx_opmode.oneshot_wait);
-            Debug.WriteLine("Handle left motor: " + _handleLeftMotor);
-            VREPWrapper.simxGetObjectHandle(_clientId, R.wheelRight0, out _handleRightMotor, simx_opmode.oneshot_wait);
-            Debug.WriteLine("Handle right motor: " + _handleRightMotor);
-            VREPWrapper.simxGetObjectHandle(_clientId, R.SICKS300, out _handleSick, simx_opmode.oneshot_wait);
-            Debug.WriteLine("Handle laser scanner: " + _handleSick);
-
-            VREPWrapper.simxGetObjectHandle(_clientId, "origo", out _handleRelative, simx_opmode.oneshot_wait);
         }
     }
 }

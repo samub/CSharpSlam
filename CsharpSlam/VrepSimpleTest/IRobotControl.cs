@@ -1,8 +1,10 @@
-﻿namespace CSharpSlam
+﻿using System;
+
+namespace CSharpSlam
 {
     internal interface IRobotControl
     {
-        int Connect();
+        int Connect(string host);
 
         void Disconnect();
 
@@ -12,8 +14,14 @@
 
         void SetWheelSpeed(double[] linAng);
 
-        void ResetSimulation();
-        
+        void SetSimulationState(SimulationCommand command);
+
         Layers GetLayers();
+
+        bool SimulationIsRunning { get; set; }
+
+        event EventHandler SimulationStateChanged;
+
+        void OnSimulationStateChanged();
     }
 }

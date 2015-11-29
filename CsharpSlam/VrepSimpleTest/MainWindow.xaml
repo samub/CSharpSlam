@@ -1,29 +1,52 @@
-﻿<Window x:Class="CSharpSlam.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="V-REP simple test" Height="500" Width="800"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="CSharpSlam.MainWindow"
+        Title="CSharpSLAM" Height="502" Width="684"
         Closed="Window_Closed"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <Grid Margin="0,1,0,-1">
-        <StackPanel HorizontalAlignment="Left" Width="200">
-            <Button Margin="4" Click="ButtonConnect_Click" Content="Connect" Background="IndianRed" Height="30" x:Name="ButtonConnect"/>
-        </StackPanel>
-        <StackPanel HorizontalAlignment="Left" Width="200" Margin="0, 36, 0, 0"  x:Name="StackControls">
-            <Button Margin="4" Click="ButtonFwd_Click" Content="Forward" x:Name="ButtonFwd" />
-            <Button Margin="4" Click="ButtonBack_Click" Content="Backward" x:Name="ButtonBck"/>
-            <Button Margin="4" Click="ButtonLeft_Click" Content="Left" x:Name="ButtonLeft" />
-            <Button Margin="4" Click="ButtonRight_Click" Content="Right" x:Name="ButtonRight" />
-            <Button Margin="4" Click="ButtonStop_Click"  Content="Stop" x:Name="ButtonStop" Background="IndianRed"/>
-            <Button Margin="4" Click="ButtonResetSim_Click"  Content="Reset simulation" x:Name="ButtonResetSim" Background="LightCoral"/>
-            <CheckBox x:Name="cbRobotLayer" Content="Robot Path Layer" Click="cbChange"/>
-            <CheckBox x:Name="cbWallLayer" Content="Wall Layer" Click="cbChange"/>
-            <CheckBox x:Name="cbEmptyLayer" Content="Empty Layer" Click="cbChange"/>
-            <!--<TextBlock x:Name="TxtData" Margin="4" Text="{Binding PositionString}" />
-            <TextBlock x:Name="TxtInfo" Margin="4" Text="{Binding WheelString}"></TextBlock>-->
-            <!-- <TextBox x:Name="txLength" Margin="4" Text="685" />  -->
-        </StackPanel>
-        <Grid Margin="205,0,0,0">
-            <Image x:Name="ImageScan" Margin="0,0,128,10" />
-        </Grid>
+        DataContext="{Binding RelativeSource={RelativeSource Self}}" MinWidth="684" MinHeight="502">
+    <Grid>
+        <DockPanel x:Name="DockControls" HorizontalAlignment="Left" Width="198" Margin="2,2,0,2" Background="#FFD6EAFF">
+            <Border x:Name="BorderControls" BorderBrush="Black" BorderThickness="2" DockPanel.Dock="Top">
+                <Border x:Name="BorderConnection" BorderBrush="#FFD11919" BorderThickness="2" Margin="0" VerticalAlignment="Top" Height="74" Background="#FFD4B2B2">
+                    <StackPanel x:Name="StackConnection" Margin="0">
+                        <Button x:Name="ButtonConnect" Content="Connect" Background="IndianRed" Margin="4,4,4,0" Height="30" Click="ButtonConnect_Click"/>
+                        <ComboBox x:Name="ComboBoxRobotType" Padding="6,3,5,3" Margin="4,4,4,0" Height="26"/>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </DockPanel>
+        <DockPanel x:Name="DockRobotControls" HorizontalAlignment="Left" Width="198" Margin="2,80,0,2">
+            <Border x:Name="BorderRobotControls" BorderBrush="#FF3A82FF" BorderThickness="2" DockPanel.Dock="Bottom" Margin="2,0,2,2" Background="#FF9EBEF7">
+                <StackPanel x:Name="StackRobotControls" Margin="0">
+                    <Button x:Name="ButtonSimulationState" Content="Start simulation" Background="IndianRed" Margin="4,4,4,0" Height="25" Click="ButtonSimulationStart_Click"/>
+                    <Button x:Name="ButtonResetSimulation" Content="Reset simulation" Background="IndianRed" Margin="4,2,4,0" Click="ButtonResetSimulation_Click"/>
+                    <Separator Height="7" Margin="5" Background="Black" BorderThickness="0"/>
+                    <Button x:Name="ButtonForward" Content="Forward" Margin="4,0" Click="ButtonForward_Click"/>
+                    <Button x:Name="ButtonBackward" Content="Backward" Margin="4,2,4,0" Click="ButtonBackward_Click"/>
+                    <Button x:Name="ButtonLeft" Content="Left" Margin="4,2,4,0" Click="ButtonLeft_Click"/>
+                    <Button x:Name="ButtonRight" Content="Right" Margin="4,2,4,0" Click="ButtonRight_Click"/>
+                    <Button x:Name="ButtonStop" Content="Stop" Background="IndianRed" Margin="4,2,4,0" Click="ButtonStop_Click"/>
+                    <Separator Height="8" Margin="5" Background="Black" BorderThickness="0"/>
+                    <Label x:Name="LabelRobotSpeed" Content="Robot speed:" Margin="0,-10,0,0"/>
+                    <StackPanel Height="28" Orientation="Horizontal" Margin="2,-5">
+                        <Slider x:Name="SliderRobotSpeed" Margin="0" RenderTransformOrigin="0.495,0.531" Minimum="1" Value="5" HorizontalAlignment="Left" Width="160" VerticalAlignment="Center" TickPlacement="BottomRight" ValueChanged="SliderRobotSpeed_ValueChanged"/>
+                        <TextBox x:Name="TextBoxRobotSpeed" TextWrapping="Wrap" Text="10" Margin="2,0,0,0" HorizontalAlignment="Right" Width="22" IsEnabled="False" VerticalAlignment="Center" Height="22" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"/>
+                    </StackPanel>
+                    <Separator Height="10" Margin="5" Background="Black" BorderThickness="0"/>
+                    <Label x:Name="LabelLayers" Content="Layers:" Height="26" Margin="0,-9,0,0"/>
+                    <CheckBox x:Name="CheckBoxRobotPathLayer" Content="Robot Path Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged"/>
+                    <CheckBox x:Name="CheckBoxWallLayer" Content="Wall Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged"/>
+                    <CheckBox x:Name="CheckBoxEmptyLayer" Content="Empty Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged"/>
+                </StackPanel>
+            </Border>
+        </DockPanel>
+        <DockPanel x:Name="DockCanvas" Margin="202,2,2,2">
+            <Border x:Name="BorderCanvas" BorderBrush="Black" BorderThickness="2" Background="#4C77B9FF">
+                <StackPanel x:Name="StackCanvas">
+                    <Image x:Name="ImageMap" RenderTransformOrigin="0.487,0.513" Margin="2,1" MinWidth="460" MinHeight="460" Height="460" Width="460"/>
+                </StackPanel>
+            </Border>
+        </DockPanel>
     </Grid>
 </Window>

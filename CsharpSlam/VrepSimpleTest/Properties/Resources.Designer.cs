@@ -61,6 +61,15 @@ namespace CSharpSlam.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connect.
+        /// </summary>
+        internal static string Connect {
+            get {
+                return ResourceManager.GetString("Connect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disconnect.
         /// </summary>
         internal static string Disconnect {
@@ -81,27 +90,36 @@ namespace CSharpSlam.Properties {
         /// <summary>
         ///   Looks up a localized string similar to 127.0.0.1.
         /// </summary>
-        internal static string localhost {
+        internal static string Localhost {
             get {
-                return ResourceManager.GetString("localhost", resourceCulture);
+                return ResourceManager.GetString("Localhost", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to measuredDataAtThisTime0.
         /// </summary>
-        internal static string measuredData0 {
+        internal static string MeasuredData0 {
             get {
-                return ResourceManager.GetString("measuredData0", resourceCulture);
+                return ResourceManager.GetString("MeasuredData0", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to neobotix#0.
         /// </summary>
-        internal static string neobotix {
+        internal static string Neobotix {
             get {
-                return ResourceManager.GetString("neobotix", resourceCulture);
+                return ResourceManager.GetString("Neobotix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to origo.
+        /// </summary>
+        internal static string Origo {
+            get {
+                return ResourceManager.GetString("Origo", resourceCulture);
             }
         }
         
@@ -124,20 +142,47 @@ namespace CSharpSlam.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start simulation.
+        /// </summary>
+        internal static string StartSimulation {
+            get {
+                return ResourceManager.GetString("StartSimulation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop simulation.
+        /// </summary>
+        internal static string StopSimulation {
+            get {
+                return ResourceManager.GetString("StopSimulation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 192.168.1.233.
+        /// </summary>
+        internal static string TestRobotIP_001 {
+            get {
+                return ResourceManager.GetString("TestRobotIP_001", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to wheel_left#0.
         /// </summary>
-        internal static string wheelLeft0 {
+        internal static string WheelLeft0 {
             get {
-                return ResourceManager.GetString("wheelLeft0", resourceCulture);
+                return ResourceManager.GetString("WheelLeft0", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to wheel_right#0.
         /// </summary>
-        internal static string wheelRight0 {
+        internal static string WheelRight0 {
             get {
-                return ResourceManager.GetString("wheelRight0", resourceCulture);
+                return ResourceManager.GetString("WheelRight0", resourceCulture);
             }
         }
     }
