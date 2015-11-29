@@ -1,9 +1,7 @@
-﻿using System.Globalization;
-
-namespace CSharpSlam
+﻿namespace CSharpSlam
 {
     using System;
-    using System.Threading;
+    using System.Globalization;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
@@ -233,7 +231,7 @@ namespace CSharpSlam
 
         private void ButtonLeft_Click(object sender, RoutedEventArgs e)
         {
-            RobotControl.SetWheelSpeed(0 , SliderRobotSpeed.Value);
+            RobotControl.SetWheelSpeed(0, SliderRobotSpeed.Value);
         }
 
         private void ButtonRight_Click(object sender, RoutedEventArgs e)
