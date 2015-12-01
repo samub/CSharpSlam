@@ -1,9 +1,7 @@
-﻿using System.Globalization;
-
-namespace CSharpSlam
+﻿namespace CSharpSlam
 {
     using System;
-    using System.Threading;
+    using System.Globalization;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
