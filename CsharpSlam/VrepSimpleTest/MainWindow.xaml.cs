@@ -15,7 +15,7 @@
     public partial class MainWindow
     {
         private const double MinToShow = 0.9;
-        private const double DefaultRobotSpeed = 5D;
+        private const double DefaultRobotSpeed = 1D;
 
         private static DispatcherTimer _timer;
 
