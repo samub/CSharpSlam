@@ -56,25 +56,30 @@ namespace CSharpSlam
                 //Pozició kalkulálás a Lokalizáció osztály segítségével.
                 CalculatePose?.Invoke(this, EventArgs.Empty);
 
+                Pose = new Pose(Pose.X, -Pose.Y, Pose.Degree);
+
                 Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, Pose.Y, Pose.Degree);
 
                 //A lézerszkenner adatainak transzformálása (eltolása / elforgatása) a pozició szerint.
-                double theta = Pose.Degree / 180 * Math.PI;
+                double theta = (-Pose.Degree) / 180 * Math.PI;
                 theta *= -1;
                 for (int i = 0; i < LaserData.GetLength(1); i++)
                 {
                     double tmpx = Math.Cos(theta) * LaserData[0, i] - Math.Sin(theta) * LaserData[1, i];
                     double tmpy = Math.Sin(theta) * LaserData[0, i] + Math.Cos(theta) * LaserData[1, i];
-                    LaserData[0, i] = tmpx * RobotControl.MapZoom + Pose.X;
-                    LaserData[1, i] = tmpy * RobotControl.MapZoom + Pose.Y;
+                    //double tmpx = LaserData[0, i];
+                    //double tmpy = LaserData[1, i];
+                    LaserData[0, i] = (tmpx * RobotControl.MapZoom + Pose.X);
+                    LaserData[1, i] = (tmpy * RobotControl.MapZoom + Pose.Y);
                 }
                 
                 //Layerek kalkulációja.
                 CreateWallLayer();
                 CreateEmptyLayer();
                 CreateRobotPathLayer();
-                
+
                 Thread.Sleep(1500);
+
             } while (true);
         }
 

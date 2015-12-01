@@ -17,7 +17,7 @@ namespace CSharpSlam
     public partial class MainWindow
     {
         private const double MinToShow = 0.9;
-        private const double DefaultRobotSpeed = 5D;
+        private const double DefaultRobotSpeed = 1D;
 
         private static DispatcherTimer _timer;
 
@@ -30,6 +30,7 @@ namespace CSharpSlam
             ComboBoxRobotType.Items.Add(R.Localhost);
             ComboBoxRobotType.Items.Add(R.TestRobotIP_001);
             ComboBoxRobotType.SelectedIndex = 0;
+            SliderRobotSpeed.Value = DefaultRobotSpeed;
             TextBoxRobotSpeed.Text = SliderRobotSpeed.Value.ToString();
             UpdateRobotControlPanel();
         }
@@ -163,7 +164,7 @@ namespace CSharpSlam
                     {
                         SetPixel(x, y, Colors.LightBlue, pixelData, rawStride);
                     }
-                    else if (CheckBoxEmptyLayer.IsChecked == true && layers.EmptyLayer[x, y] >= MinToShow)
+                    else if (CheckBoxEmptyLayer.IsChecked == true && layers.EmptyLayer[x, y] >= 0.99)
                     {
                         SetPixel(x, y, Colors.Gray, pixelData, rawStride);
                     }
@@ -233,12 +234,12 @@ namespace CSharpSlam
 
         private void ButtonLeft_Click(object sender, RoutedEventArgs e)
         {
-            RobotControl.SetWheelSpeed(0 , SliderRobotSpeed.Value);
+            RobotControl.SetWheelSpeed(-SliderRobotSpeed.Value, SliderRobotSpeed.Value);
         }
 
         private void ButtonRight_Click(object sender, RoutedEventArgs e)
         {
-            RobotControl.SetWheelSpeed(SliderRobotSpeed.Value, 0);
+            RobotControl.SetWheelSpeed(SliderRobotSpeed.Value, -SliderRobotSpeed.Value);
         }
 
         private void ButtonStop_Click(object sender, RoutedEventArgs e)
