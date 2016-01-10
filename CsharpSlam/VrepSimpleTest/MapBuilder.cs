@@ -56,7 +56,7 @@ namespace CSharpSlam
                 //Pozició kalkulálás a Lokalizáció osztály segítségével.
                 CalculatePose?.Invoke(this, EventArgs.Empty);
 
-                Pose = new Pose(Pose.X, -Pose.Y, Pose.Degree);
+                Pose = new Pose(Pose.X, Pose.Y, Pose.Degree);
 
                 Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, Pose.Y, Pose.Degree);
 
