@@ -1,34 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace CSharpSlam
+﻿namespace CSharpSlam
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Threading;
+
     class MapBuilder
     {
         public const int MapSize = 2000;
-        private int centerX, centerY;
+        private readonly int _centerX;
+        private readonly int _centerY;
 
-        public Layers Layers { get; private set; }
+        public Layers Layers { get; set; }
+
         public Pose Pose { private get; set; }
+
         public double[,] LaserData { get; set; }
 
         public event EventHandler RequestLaserScannerDataRefresh;
         public event EventHandler CalculatePose;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MapBuilder" /> class.
+        /// </summary>
         public MapBuilder()
         {
-            this.LaserData = new double[0, 0];
+            LaserData = new double[0, 0];
             Layers = new Layers();
-            centerX = centerY = MapSize / 2;
+            _centerX = _centerY = MapSize / 2;
         }
 
-        
         public void BuildLayers()
         {
             //Első várakozás
@@ -49,28 +51,28 @@ namespace CSharpSlam
                 for (int i = 0; i < LaserData.GetLength(1); i++)
                 {
                     if (Math.Sqrt(LaserData[0, i] * LaserData[0, i] + LaserData[1, i] * LaserData[1, i]) > 0.8)
-                        ld.Add(new double[] { LaserData[0, i], LaserData[1, i] });
+                        ld.Add(new[] { LaserData[0, i], LaserData[1, i] });
                 }
                 LaserData = CreateRectangularArray(ld);
 
                 //Pozició kalkulálás a Lokalizáció osztály segítségével.
                 CalculatePose?.Invoke(this, EventArgs.Empty);
 
-                Pose = new Pose(Pose.X, Pose.Y, Pose.Degree);
+                Pose = new Pose(Pose.X, -Pose.Y, Pose.Degree);
 
-                Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, Pose.Y, Pose.Degree);
+                Debug.WriteLine("x: {0}, y: {1}, degree: {2}", Pose.X, -Pose.Y, Pose.Degree);
 
                 //A lézerszkenner adatainak transzformálása (eltolása / elforgatása) a pozició szerint.
                 double theta = (-Pose.Degree) / 180 * Math.PI;
                 theta *= -1;
                 for (int i = 0; i < LaserData.GetLength(1); i++)
                 {
-                    double tmpx = Math.Cos(theta) * LaserData[0, i] - Math.Sin(theta) * LaserData[1, i];
-                    double tmpy = Math.Sin(theta) * LaserData[0, i] + Math.Cos(theta) * LaserData[1, i];
+                    double tmpX = Math.Cos(theta) * LaserData[0, i] - Math.Sin(theta) * LaserData[1, i];
+                    double tmpY = Math.Sin(theta) * LaserData[0, i] + Math.Cos(theta) * LaserData[1, i];
                     //double tmpx = LaserData[0, i];
                     //double tmpy = LaserData[1, i];
-                    LaserData[0, i] = (tmpx * RobotControl.MapZoom + Pose.X);
-                    LaserData[1, i] = (tmpy * RobotControl.MapZoom + Pose.Y);
+                    LaserData[0, i] = (tmpX * RobotControl.MapZoom + Pose.X);
+                    LaserData[1, i] = (tmpY * RobotControl.MapZoom + Pose.Y);
                 }
                 
                 //Layerek kalkulációja.
@@ -80,7 +82,8 @@ namespace CSharpSlam
 
                 Thread.Sleep(1500);
 
-            } while (true);
+            }
+            while (true);
         }
 
         private void CreateWallLayer()
@@ -88,9 +91,10 @@ namespace CSharpSlam
             //A lézerrel mért,adatok szerint növeljük az adott kordinátán lévő fal valószínűségét.
             for (int i = 0; i < LaserData.GetLength(1); i++)
             {
-                try {
-                    Int32 xW = Convert.ToInt32((LaserData[0, i])) + centerX;
-                    Int32 yW = Convert.ToInt32((LaserData[1, i])) + centerY;
+                try
+                {
+                    int xW = Convert.ToInt32((LaserData[0, i])) + _centerX;
+                    int yW = Convert.ToInt32((LaserData[1, i])) + _centerY;
                     if (xW > 0 && yW > 0 && xW < MapSize && yW < MapSize)
                     {
                         Layers.WallLayer[xW, yW] = (1.0 + Layers.WallLayer[xW, yW]) / 2;
@@ -98,14 +102,14 @@ namespace CSharpSlam
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine("MapBuilder-CreateWallLayer() Exception: "+e.Message);
-                };
+                    Debug.WriteLine("MapBuilder-CreateWallLayer() Exception: " + e.Message);
+                }
             }
         }
         private void CreateEmptyLayer()
         {
-            int xx = centerX + Pose.X;
-            int yy = centerY + Pose.Y;
+            int xx = _centerX + Pose.X;
+            int yy = _centerY + Pose.Y;
             //A lézerrel mért,adatok szerint növeljük a robot és a fal közötti pontokon az üresség valószínűségét.
             for (int i = 0; i < LaserData.GetLength(1); i++)
             {
@@ -113,8 +117,8 @@ namespace CSharpSlam
                 {
                     int x = xx;
                     int y = yy;
-                    Int32 x2 = Convert.ToInt32((LaserData[0, i])) + centerX;
-                    Int32 y2 = Convert.ToInt32((LaserData[1, i])) + centerY;
+                    int x2 = Convert.ToInt32((LaserData[0, i])) + _centerX;
+                    int y2 = Convert.ToInt32((LaserData[1, i])) + _centerY;
 
                     //bresenham's algoritmus
                     int w = x2 - x;
@@ -135,7 +139,7 @@ namespace CSharpSlam
                     int numerator = longest >> 1;
                     for (int z = 0; z <= longest; z++)
                     {
-                        if(x != x2 && y != y2)
+                        if (x != x2 && y != y2)
                             Layers.EmptyLayer[x, y] = (1.0 + Layers.EmptyLayer[x, y]) / 2;
                         numerator += shortest;
                         if (!(numerator < longest))
@@ -155,22 +159,23 @@ namespace CSharpSlam
                 catch (Exception e)
                 {
                     Debug.WriteLine("MapBuilder-CreateEmptyLayer() Exception: " + e.Message);
-                    continue;
                 }
             }
         }
         private void CreateRobotPathLayer()
         {
             //Hozzáadjuk a robot aktuális pozicióját a listához.
-            Pose p = new Pose(Pose.X + centerX, Pose.Y + centerY, Pose.Degree);
-            if(!Layers.RobotPathList.Contains(p))
+            Pose p = new Pose(Pose.X + _centerX, Pose.Y + _centerY, Pose.Degree);
+            if (!Layers.RobotPathList.Contains(p))
+            {
                 Layers.RobotPathList.Add(p);
+            }
         }
 
-        private void WriteToCSV(double[,] multiDimensionalArray, string FileName)
+        private void WriteToCsv(double[,] multiDimensionalArray, string fileName)
         {
-            String path = FileName + ".csv";
-            String item = String.Empty;
+            string path = fileName + ".csv";
+            string item = string.Empty;
             for (int x = 0; x < multiDimensionalArray.GetLength(0); x++)
             {
                 for (int y = 0; y < multiDimensionalArray.GetLength(1); y++)
@@ -179,7 +184,7 @@ namespace CSharpSlam
                 }
                 item += (Environment.NewLine);
             }
-                    File.WriteAllText(path, item);
+            File.WriteAllText(path, item);
         }
 
         static T[,] CreateRectangularArray<T>(IList<T[]> arrays)
@@ -192,7 +197,7 @@ namespace CSharpSlam
             T[,] ret = new T[minorLength, arrays.Count];
             for (int i = 0; i < arrays.Count; i++)
             {
-                var array = arrays[i];
+                T[] array = arrays[i];
                 if (array.Length != minorLength)
                 {
                     throw new ArgumentException

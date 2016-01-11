@@ -10,7 +10,7 @@
     using R = Properties.Resources;
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
@@ -29,7 +29,7 @@
             ComboBoxRobotType.Items.Add(R.TestRobotIP_001);
             ComboBoxRobotType.SelectedIndex = 0;
             SliderRobotSpeed.Value = DefaultRobotSpeed;
-            TextBoxRobotSpeed.Text = SliderRobotSpeed.Value.ToString();
+            TextBoxRobotSpeed.Text = SliderRobotSpeed.Value.ToString(CultureInfo.InvariantCulture);
             UpdateRobotControlPanel();
         }
 
@@ -38,7 +38,7 @@
             UpdateRobotControlPanel();
         }
 
-        private IRobotControl RobotControl { get; set; }
+        private IRobotControl RobotControl { get; }
 
         private void SetDockPanelStateEnabled(bool enabled)
         {
@@ -58,32 +58,37 @@
                     ButtonConnect.Background = Brushes.IndianRed;
                     ButtonConnect.Content = R.Connect;
                     SetDockPanelStateEnabled(false);
+                    ClearMap();
                     break;
                 case -2:
                     ButtonConnect.Background = Brushes.IndianRed;
                     ButtonConnect.Content = R.Connect;
                     SetDockPanelStateEnabled(false);
                     _timer.Stop();
+                    ClearMap();
                     break;
                 default:
                     ButtonConnect.Background = Brushes.LightSeaGreen;
                     ButtonConnect.Content = R.Disconnect;
                     SetDockPanelStateEnabled(true);
-                    _timer = new DispatcherTimer
-                    {
-                        Interval = TimeSpan.FromMilliseconds(5000)
-                    };
+                    _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(5000) };
                     _timer.Tick += MapUpdate;
                     _timer.Start();
                     break;
             }
         }
 
+        private void ClearMap()
+        {
+            RobotControl.ClearMap();
+            ImageMap.Source = null;
+        }
+
         private void UpdateRobotControlPanel()
         {
             foreach (var item in StackRobotControls.Children)
             {
-                if ((item is Button || item is CheckBox) && item != ButtonSimulationState)
+                if ((item is Button || item is CheckBox) && !item.Equals(ButtonSimulationState) && !item.Equals(ButtonClearMap))
                 {
                     ((Control)item).IsEnabled = RobotControl.SimulationIsRunning;
                 }
@@ -100,59 +105,29 @@
             Application.Current.Shutdown();
         }
 
-        //private void ButtonClearCanvas_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //CanvScan.Children.Clear();
-        //}
+        private void ButtonClearCanvas_Click(object sender, RoutedEventArgs e)
+        {
+            ClearMap();
+        }
 
-        //private void ButtonLaserScanTest_Click(object sender, RoutedEventArgs e)
-        //{
-        //    /*Layers layers = RobotControl.GetLayers();
-        //    PixelFormat pf = PixelFormats.Rgb24;
-        //    int width, height, rawStride;
-        //    byte[] pixelData;
-
-        //    width =  MapBuilder.MapSize;
-        //    height = MapBuilder.MapSize;
-        //    rawStride = (width * pf.BitsPerPixel + 7) / 8;
-        //    pixelData = new byte[rawStride * height];
-
-        //    //SetPixel(5, 5, Colors.Red, pixelData, rawStride);
-        //    for (int y = 0; y < height; y++)
-        //        for (int x = 0; x < width; x++)
-        //        {
-        //            if (layers.RobotPathLayer[x, y] >= MinToShow)
-        //            {
-        //                SetPixel(x, y, Colors.Red, pixelData, rawStride);
-        //            }
-        //            else if (layers.WallLayer[x, y] >= MinToShow)
-        //            {
-        //                SetPixel(x, y, Colors.LightBlue, pixelData, rawStride);
-        //            }
-        //            else if (layers.EmptyLayer[x, y] >= MinToShow)
-        //            {
-        //                SetPixel(x, y, Colors.Gray, pixelData, rawStride);
-        //            }
-        //        }
-        //    BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, pf, null, pixelData, rawStride);
-        //    ImageScan.Source = bitmap;*/
-        //}
-
-        private void MapUpdate(object o, EventArgs e)
+        private void MapUpdate(object sender, EventArgs e)
         {
             MapRender();
         }
 
         private void MapRender()
         {
-            //Lekérdezzük a layereket majd létrehozunk egy annyi képpontból álló bitmapet mint amekkora a felbontása a térképünknek, majd a bitmapen kirajzoljuk a térkép adatait a beállítások szerint.
+            //Lekérdezzük a layereket majd létrehozunk egy annyi képpontból álló bitmapet mint amekkora a felbontása a térképünknek, 
+            //majd a bitmapen kirajzoljuk a térkép adatait a beállítások szerint.
             Layers layers = RobotControl.GetLayers();
-            PixelFormat pf = PixelFormats.Rgb24;
-
             const int width = MapBuilder.MapSize;
             const int height = MapBuilder.MapSize;
-            int rawStride = (width * pf.BitsPerPixel + 7) / 8;
+            int rawStride = (width * PixelFormats.Rgb24.BitsPerPixel + 7) / 8;
             byte[] pixelData = new byte[rawStride * height];
+            for (int i = 0; i < pixelData.Length; i++)
+            {
+                pixelData[i] = 255;
+            }
 
             for (int y = 0; y < height; y++)
             {
@@ -160,11 +135,11 @@
                 {
                     if (CheckBoxWallLayer.IsChecked == true && layers.WallLayer[x, y] >= MinToShow)
                     {
-                        SetPixel(x, y, Colors.LightBlue, pixelData, rawStride);
+                        SetPixel(x, y, Colors.Blue, pixelData, rawStride);
                     }
                     else if (CheckBoxEmptyLayer.IsChecked == true && layers.EmptyLayer[x, y] >= 0.99)
                     {
-                        SetPixel(x, y, Colors.Gray, pixelData, rawStride);
+                        SetPixel(x, y, Colors.Beige, pixelData, rawStride);
                     }
                 }
             }
@@ -179,14 +154,14 @@
                         {
                             if (y >= 0 && y < MapBuilder.MapSize && x >= 0 && x < MapBuilder.MapSize)
                             {
-                                SetPixel(x, y, Colors.Red, pixelData, rawStride);
+                                SetPixel(x, y, Colors.Coral, pixelData, rawStride);
                             }
                         }
                     }
                 }
             }
 
-            BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, pf, null, pixelData, rawStride);
+            BitmapSource bitmap = BitmapSource.Create(width, height, 96, 96, PixelFormats.Rgb24, null, pixelData, rawStride);
             ImageMap.Source = bitmap;
         }
 

@@ -22,6 +22,8 @@
                     <Button x:Name="ButtonSimulationState" Content="Start simulation" Background="IndianRed" Margin="4,4,4,0" Height="25" Click="ButtonSimulationStart_Click"/>
                     <Button x:Name="ButtonResetSimulation" Content="Reset simulation" Background="IndianRed" Margin="4,2,4,0" Click="ButtonResetSimulation_Click"/>
                     <Separator Height="7" Margin="5" Background="Black" BorderThickness="0"/>
+                    <Button x:Name="ButtonClearMap" Content="Clear map" Background="DodgerBlue" Margin="4,0" Click="ButtonClearCanvas_Click"/>
+                    <Separator Height="7" Margin="5,6,5,5" Background="Black" BorderThickness="0"/>
                     <Button x:Name="ButtonForward" Content="Forward" Margin="4,0" Click="ButtonForward_Click"/>
                     <Button x:Name="ButtonBackward" Content="Backward" Margin="4,2,4,0" Click="ButtonBackward_Click"/>
                     <Button x:Name="ButtonLeft" Content="Left" Margin="4,2,4,0" Click="ButtonLeft_Click"/>
@@ -35,16 +37,16 @@
                     </StackPanel>
                     <Separator Height="10" Margin="5" Background="Black" BorderThickness="0"/>
                     <Label x:Name="LabelLayers" Content="Layers:" Height="26" Margin="0,-9,0,0"/>
-                    <CheckBox x:Name="CheckBoxRobotPathLayer" Content="Robot Path Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged"/>
-                    <CheckBox x:Name="CheckBoxWallLayer" Content="Wall Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged"/>
-                    <CheckBox x:Name="CheckBoxEmptyLayer" Content="Empty Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged"/>
+                    <CheckBox x:Name="CheckBoxRobotPathLayer" Content="Robot Path Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged" IsChecked="True"/>
+                    <CheckBox x:Name="CheckBoxWallLayer" Content="Wall Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged" IsChecked="True"/>
+                    <CheckBox x:Name="CheckBoxEmptyLayer" Content="Empty Layer" Margin="5,0" Height="15" Padding="1,-1,0,0" VerticalContentAlignment="Center" Click="CheckBoxCheckStateChanged" IsChecked="True"/>
                 </StackPanel>
             </Border>
         </DockPanel>
         <DockPanel x:Name="DockCanvas" Margin="202,2,2,2">
-            <Border x:Name="BorderCanvas" BorderBrush="Black" BorderThickness="2" Background="#4C77B9FF">
+            <Border x:Name="BorderCanvas" BorderBrush="Black" BorderThickness="2">
                 <StackPanel x:Name="StackCanvas">
-                    <Image x:Name="ImageMap" RenderTransformOrigin="0.487,0.513" Margin="2,1" MinWidth="460" MinHeight="460" Height="460" Width="460"/>
+                    <Image x:Name="ImageMap" RenderTransformOrigin="0.487,0.513" Margin="2,1" MinWidth="460" MinHeight="460" Height="460" Width="460" />
                 </StackPanel>
             </Border>
         </DockPanel>
