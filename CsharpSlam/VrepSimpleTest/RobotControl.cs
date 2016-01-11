@@ -7,42 +7,80 @@ namespace CSharpSlam
     using remoteApiNETWrapper;
     using R = Properties.Resources;
 
+    /// <summary>
+    ///     Enumeration for the simulation commands.
+    /// </summary>
     public enum SimulationCommand
     {
+        /// <summary>Represents the stop command.</summary>
         Stop = 0,
+
+        /// <summary>Represents the start command.</summary>
         Start = 1,
+
+        /// <summary>Represents the reset command.</summary>
         Reset = 2
     }
 
+    /// <summary>
+    ///     Represents the control functions of a Neobotix robot and the visual appearance on the computer screen.
+    /// </summary>
     internal class RobotControl : IRobotControl
     {
+        /// <summary>Default zoom value of the map.</summary>
         public const int MapZoom = 50;
-        public const int MapSize = 2000;
 
+        /// <summary>The client ID.</summary>
         private int _clientId = -1;
-        private int _handleLeftMotor, _handleRightMotor;
-        private int _handleSick;
-        private int _handleRelative;
-        private bool _connected;
-        private IntPtr _signalValuePtr;
-        private int _signalLength;
-        private Thread _mapBuilderThread;
-        private bool _simulationIsRunning;
-        private int ind = 0;
 
+        /// <summary>Handles for the motors.</summary>
+        private int _handleLeftMotor, _handleRightMotor;
+
+        /// <summary>Handle for the laser scanner.</summary>
+        private int _handleSick;
+
+        /// <summary>Handle for the origo.</summary>
+        private int _handleRelative;
+
+        /// <summary>Variable for the connection state.</summary>
+        private bool _connected;
+
+        /// <summary>Pointer to a pointer receiving the value of the signal.</summary>
+        private IntPtr _signalValuePtr;
+
+        /// <summary>The value of the signal length.</summary>
+        private int _signalLength;
+
+        /// <summary>Variable to able to draw the map on a new thread.</summary>
+        private Thread _mapBuilderThread;
+
+        /// <summary>Variable for the simulation state.</summary>
+        private bool _simulationIsRunning;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RobotControl" /> class.
+        /// </summary>
         public RobotControl()
         {
             MapBuilder = new MapBuilder();
             Localization = new Localization();
         }
 
-        private MapBuilder MapBuilder { get; set; }
+        /// <summary>
+        ///     Event handler for the simulation state change.    
+        /// </summary>
+        public event EventHandler SimulationStateChanged;
 
-        private Localization Localization { get; set; }
-
+        /// <summary>
+        ///     Gets or sets the state of the simulation.
+        /// </summary>
         public bool SimulationIsRunning
         {
-            get { return _simulationIsRunning; }
+            get
+            {
+                return _simulationIsRunning;
+            }
+
             set
             {
                 _simulationIsRunning = value;
@@ -50,13 +88,29 @@ namespace CSharpSlam
             }
         }
 
-        public event EventHandler SimulationStateChanged;
+        /// <summary>
+        ///     Gets or sets the reference of the MapBuilder class.
+        /// </summary>
+        private MapBuilder MapBuilder { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the reference of the Localization class.
+        /// </summary>
+        private Localization Localization { get; set; }
+
+        /// <summary>
+        ///     Trigger for the simulation state change event.
+        /// </summary>
         public void OnSimulationStateChanged()
         {
             SimulationStateChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        ///     Function for connecting to the robot.
+        /// </summary>
+        /// <param name="host">Address of the robot.</param>
+        /// <returns>Returns error codes about the success of the connection.</returns>
         public int Connect(string host)
         {
             // If not connected - try to connect
@@ -94,6 +148,9 @@ namespace CSharpSlam
             return -2;
         }
 
+        /// <summary>
+        ///     Disconnects the robot.
+        /// </summary>
         public void Disconnect()
         {
             if (!_connected)
@@ -106,6 +163,10 @@ namespace CSharpSlam
             VREPWrapper.simxFinish(-1);
         }
 
+        /// <summary>
+        ///     Starts, stops or resets the V-REP EDU simulation according to the given command.
+        /// </summary>
+        /// <param name="command">The given command.</param>
         public void SetSimulationState(SimulationCommand command)
         {
             switch (command)
@@ -126,6 +187,46 @@ namespace CSharpSlam
             }
         }
 
+        public double[] GetWheelSpeed()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Sets the speed of the joints of the robot.
+        /// </summary>
+        /// <param name="r">The right joint.</param>
+        /// <param name="l">The left joint.</param>
+        public void SetWheelSpeed(double r, double l)
+        {
+            VREPWrapper.simxSetJointTargetVelocity(_clientId, _handleLeftMotor, (float)r, simx_opmode.oneshot_wait);
+            VREPWrapper.simxSetJointTargetVelocity(_clientId, _handleRightMotor, (float)l, simx_opmode.oneshot_wait);
+        }
+
+        public void SetWheelSpeed(double[] linAng)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// TODO: test function, should be removed later
+        /// </summary>
+        public Layers GetLayers()
+        {
+            return MapBuilder.Layers;
+        }
+
+        /// <summary>
+        ///     Clears the layer data collected for the map.
+        /// </summary>
+        public void ClearMap()
+        {
+            MapBuilder.Layers = new Layers();
+        }
+
+        /// <summary>
+        ///     Starts the simulation in the V-REP EDU application and begins drawing the map on a new thread.
+        /// </summary>
         private void StartSimulation()
         {
             VREPWrapper.simxGetObjectHandle(_clientId, R.WheelLeft0, out _handleLeftMotor, simx_opmode.oneshot_wait);
@@ -158,6 +259,9 @@ namespace CSharpSlam
             SimulationIsRunning = true;
         }
 
+        /// <summary>
+        ///     Stops the simulation in the V-REP EDU application and aborts the map drawing thread.
+        /// </summary>
         private void StopSimulation()
         {
             VREPWrapper.simxStopSimulation(_clientId, simx_opmode.oneshot_wait);
@@ -165,24 +269,13 @@ namespace CSharpSlam
             _mapBuilderThread?.Abort();
             Localization.PoseChanged -= PoseChanged;
             MapBuilder.RequestLaserScannerDataRefresh -= RequestLaserScannerDataRefresh;
+            MapBuilder.CalculatePose -= CalculatePose;
         }
 
-        public double[] GetWheelSpeed()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetWheelSpeed(double r, double l)
-        {
-            VREPWrapper.simxSetJointTargetVelocity(_clientId, _handleLeftMotor, (float)r, simx_opmode.oneshot_wait);
-            VREPWrapper.simxSetJointTargetVelocity(_clientId, _handleRightMotor, (float)l, simx_opmode.oneshot_wait);
-        }
-
-        public void SetWheelSpeed(double[] linAng)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        ///     Collects the laser scanner data from the simulator.
+        /// </summary>
+        /// <returns>Returns the collected laser scanner data.</returns>
         private double[,] GetLaserScannerData()
         {
             double[,] laserScannerData;
@@ -190,7 +283,10 @@ namespace CSharpSlam
             simx_error s = VREPWrapper.simxReadStringStream(_clientId, R.MeasuredData0, ref _signalValuePtr, ref _signalLength, simx_opmode.streaming);
 
             if (s != simx_error.noerror)
+            {
                 return new double[0, 0];
+            }
+
             //Debug.WriteLine(s);
             //  Debug.WriteLine(String.Format("test: {0:X8} {1:D} {2:X8}", _signalValuePtr, _signalLength, _signalValuePtr+_signalLength));
             float[] f = new float[685 * 3];
@@ -228,13 +324,12 @@ namespace CSharpSlam
         }
 
         /// <summary>
-        /// TODO: test function, should be removed later
+        ///     Switch Pose data between Localization and Mapbuilder classes.
+        ///     Localization calculates the new Pose data from the given layers
+        ///     by the Mapbuilder and then give it back to the sender.
         /// </summary>
-        public Layers GetLayers()
-        {
-            return MapBuilder.Layers;
-        }
-
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         private void CalculatePose(object sender, EventArgs e)
         {
             Localization.CurrentRawDatas = MapBuilder.LaserData;
@@ -243,11 +338,22 @@ namespace CSharpSlam
             MapBuilder.Pose = Localization.Pose;
         }
 
+        /// <summary>
+        ///     Switch Pose data between Localization and Mapbuilder classes when
+        ///     any changes happened.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         private void PoseChanged(object sender, EventArgs e)
         {
             MapBuilder.Pose = Localization.Pose;
         }
 
+        /// <summary>
+        ///     Request to refresh the laser scanner data.
+        /// </summary>
+        /// <param name="sender">Sender object.</param>
+        /// <param name="e">Event arguments.</param>
         private void RequestLaserScannerDataRefresh(object sender, EventArgs e)
         {
             MapBuilder.LaserData = GetLaserScannerData();
